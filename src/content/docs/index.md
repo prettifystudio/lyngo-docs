@@ -1,9 +1,9 @@
 ---
 title: "Lyngo"
-description: "Localization for your repository, from the terminal. Your agent builds the feature; Lyngo localizes it."
+description: "Localization for your Laravel application, from the terminal. Your agent builds the feature; Lyngo localizes it."
 ---
 
-Lyngo localizes a web application from the terminal. The CLI wraps every string a person reads with your framework's i18n call, reuses the keys your project already has, translates the catalogs, and verifies them. The GitHub App opens a pull request for anything pushed without the CLI.
+Lyngo localizes a Laravel application from the terminal: Blade, Livewire and PHP, and the Inertia front-end in React, Vue or Svelte. The CLI wraps every string a person reads with your framework's i18n call, reuses the keys your project already has, translates the catalogs, and verifies them. The GitHub App opens a pull request for anything pushed without the CLI.
 
 Three commands:
 

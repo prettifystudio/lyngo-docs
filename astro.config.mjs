@@ -8,7 +8,7 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'Lyngo',
-			description: 'Localization for your repository, from the terminal. Your agent builds the feature; Lyngo localizes it.',
+			description: 'Localization for your Laravel application, from the terminal. Your agent builds the feature; Lyngo localizes it.',
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/prettifystudio' }],
 			customCss: ['./src/styles/custom.css'],
 			logo: { src: './src/assets/logo.svg', alt: 'Lyngo' },
@@ -16,7 +16,7 @@ export default defineConfig({
 			plugins: [
 				starlightLlmsTxt({
 					projectName: 'Lyngo',
-					description: 'Localization for your repository, from the terminal. The CLI wraps every string a person reads, reuses the keys the project has, translates and verifies the catalogs. The GitHub App opens a pull request for anything pushed without it.',
+					description: 'Localization for Laravel applications (Blade, Livewire, PHP, and Inertia with React, Vue or Svelte), from the terminal. The CLI wraps every string a person reads, reuses the keys the project has, translates and verifies the catalogs. The GitHub App opens a pull request for anything pushed without it.',
 					details: 'Every page is also served as Markdown: add .md to its path. llms-full.txt holds the whole manual.',
 				}),
 			],

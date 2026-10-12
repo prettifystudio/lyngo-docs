@@ -33,7 +33,7 @@ Enter the code on the page and confirm. The token is saved on this machine, read
 
 ## 4. Set up the repository
 
-Run it inside your repository. The repository must be on GitHub.
+Run it inside your Laravel repository. The repository must be on GitHub.
 
 ```sh
 cd your-app
