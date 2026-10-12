@@ -50,3 +50,35 @@ header.header { border-bottom: 1px solid #151515; }
 .lyngo-agent-bar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.9rem; }
 .lyngo-agent-bar a, .lyngo-agent-bar button { font-family: var(--sl-font-mono); font-size: 11px; letter-spacing: 0.3px; padding: 0.35rem 0.7rem; border: 1px solid #1c1c1c; border-radius: 0.4rem; background: #0d0d0d; color: #999; text-decoration: none; cursor: pointer; }
 .lyngo-agent-bar a:hover, .lyngo-agent-bar button:hover { color: #ededed; border-color: #2a2a2a; }
+
+/* Code blocks: the renderer's own variables, so its stylesheet stays the default one
+   (a custom configuration breaks the stylesheet's name on this Starlight + Astro pair). */
+.expressive-code {
+	--ec-brdRad: 12px;
+	--ec-brdCol: #1c1c1c;
+	--ec-brdWd: 1px;
+	--ec-codeBg: #0d0d0d;
+	--ec-codeFg: #cccccc;
+	--ec-codeFontFml: 'JetBrains Mono', ui-monospace, monospace;
+	--ec-codeFontSize: 13px;
+	--ec-codeLineHt: 1.7;
+	--ec-codePadBlk: 16px;
+	--ec-codePadInl: 18px;
+	--ec-uiFontFml: 'JetBrains Mono', ui-monospace, monospace;
+	--ec-uiFontSize: 11px;
+	--ec-frm-shdCol: transparent;
+	--ec-frm-edBg: #0d0d0d;
+	--ec-frm-edActTabBg: #0a0a0a;
+	--ec-frm-edActTabFg: #ededed;
+	--ec-frm-edTabBarBg: #0d0d0d;
+	--ec-frm-edTabBarBrdBtmCol: #1c1c1c;
+	--ec-frm-trmBg: #0d0d0d;
+	--ec-frm-trmTtbBg: #0d0d0d;
+	--ec-frm-trmTtbBrdBtmCol: #1c1c1c;
+	--ec-frm-trmTtbDotsFg: #1f1f1f;
+	--ec-frm-trmTtbDotsOpa: 1;
+	--ec-frm-trmTtbFg: #666;
+	--ec-frm-inlBtnBg: #141414;
+	--ec-frm-inlBtnBrd: #2a2a2a;
+	--ec-frm-inlBtnFg: #999;
+}
