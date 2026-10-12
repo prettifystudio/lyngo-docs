@@ -3,6 +3,10 @@ title: "Get started"
 description: "From an account to the first localized change, in ten minutes."
 ---
 
+## The short way
+
+Open [lyngo.app/start](https://lyngo.app/start), copy the prompt into your coding agent, and let it run. It installs the CLI, logs you in, connects the repository, sets up i18n and localizes your first change; you confirm two things in the browser. The steps below are the same path by hand.
+
 ## 1. Make an account
 
 Sign up at [lyngo.app](https://lyngo.app). You do this once. Everything after it happens in the terminal.

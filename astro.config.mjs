@@ -26,6 +26,7 @@ export default defineConfig({
 				{
 					label: 'Commands',
 					items: [
+						{ label: 'lyngo onboard', slug: 'commands/onboard' },
 						{ label: 'lyngo login', slug: 'commands/login' },
 						{ label: 'lyngo init', slug: 'commands/init' },
 						{ label: 'lyngo localize', slug: 'commands/localize' },
