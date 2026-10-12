@@ -11,6 +11,8 @@ export default defineConfig({
 			description: 'Localization for your repository, from the terminal. Your agent builds the feature; Lyngo localizes it.',
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/prettifystudio' }],
 			customCss: ['./src/styles/custom.css'],
+			logo: { src: './src/assets/logo.svg', alt: 'Lyngo' },
+			expressiveCode: { themes: ['github-dark-default'], styleOverrides: { borderRadius: '12px', frames: { shadowColor: 'transparent' } } },
 			components: { PageTitle: './src/components/PageTitle.astro' },
 			plugins: [
 				starlightLlmsTxt({
