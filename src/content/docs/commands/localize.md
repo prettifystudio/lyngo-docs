@@ -4,7 +4,7 @@ description: "Localize and translate what changed in the working tree."
 ---
 
 ```sh
-lyngo localize [--languages fr,de] [--dry]
+lyngo localize [--languages fr,de] [--no-translate] [--dry]
 ```
 
 Reads the files you changed, sends them with the catalogs, applies the patch, prints the report. Nothing is committed.
@@ -38,7 +38,12 @@ The server takes 30 files per call. With more, the CLI makes several calls and c
 | flag | meaning |
 |---|---|
 | `--languages fr,de` | fill only these languages this time |
+| `--no-translate` | wrap and add the keys only; leave the other languages' catalogs to your translators |
 | `--dry` | print the patch instead of applying it |
+
+## Localization without translation
+
+Some teams wrap with Lyngo and translate with people. `--no-translate` does that for one run; the project setting **Translate when localizing** (Settings, Translation) does it every time, including for the Claude Code hook, which runs `localize` without flags. With the setting off, the report ends with `catalogs: not translated (keys only).` and the editor, `lyngo translate`, or your translators fill the catalogs.
 
 ## After
 

@@ -36,6 +36,10 @@ The agent, when there is one, sees only the report: ten lines. The files never p
 3. **The call.** The framework's own call, in the right scope: `__()` in Blade and PHP, `t()` from `useTranslation()` in React, `$t()` in Vue templates, `$_()` in Svelte, `i18next.t()` or `i18n.global.t` at module scope where a hook cannot run.
 4. **The catalogs.** Every language gets the new keys. Values come from translation memory first, then the translator with the project's glossary, then the verifier: placeholders, plural forms per language, script, truncation, register.
 
+## Localization and translation are separate
+
+Wrapping the code and filling the catalogs are two steps. `lyngo localize --no-translate`, or the project setting "Translate when localizing" turned off, does the first and leaves the second to your translators, the editor, or `lyngo translate`. A team that already wraps its own strings can use only the second: `localize` finds nothing to change in files that are already localized, and `translate` fills the languages.
+
 ## What is kept
 
 Refused strings (texts your team took out of localization, learned from a reverted pull request or set by hand), the glossary, and the translation memory of the workspace. They apply to the CLI, the App and the agent alike.
