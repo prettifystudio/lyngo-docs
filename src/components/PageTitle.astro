@@ -1,0 +1,30 @@
+---
+// The default title, then the agent bar: copy this page as Markdown, open it
+// in Claude or ChatGPT, or fetch the raw .md. Every page has these.
+import Default from '@astrojs/starlight/components/PageTitle.astro';
+const path = Astro.url.pathname.replace(/\/$/, '') || '/index';
+const md = `${Astro.site?.origin ?? ''}${path}.md`;
+const ask = encodeURIComponent(`Read ${md} and help me with it.`);
+---
+<Default><slot /></Default>
+<div class="lyngo-agent-bar" data-md={md}>
+	<button type="button" data-copy-md>Copy as Markdown</button>
+	<a href={md}>View as Markdown</a>
+	<a href={`https://claude.ai/new?q=${ask}`} target="_blank" rel="noopener">Open in Claude</a>
+	<a href={`https://chatgpt.com/?q=${ask}`} target="_blank" rel="noopener">Open in ChatGPT</a>
+</div>
+<script>
+	document.querySelectorAll<HTMLElement>('.lyngo-agent-bar').forEach((bar) => {
+		const button = bar.querySelector<HTMLButtonElement>('[data-copy-md]');
+		button?.addEventListener('click', async () => {
+			try {
+				const text = await (await fetch(bar.dataset.md!)).text();
+				await navigator.clipboard.writeText(text);
+				button.textContent = 'Copied';
+				setTimeout(() => (button.textContent = 'Copy as Markdown'), 1500);
+			} catch {
+				button.textContent = 'Copy failed';
+			}
+		});
+	});
+</script>
