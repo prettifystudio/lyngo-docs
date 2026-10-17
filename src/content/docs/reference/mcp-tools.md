@@ -9,7 +9,7 @@ description: "Every tool, where it lives, and what it needs."
 |---|---|
 | `status` | languages, library, catalog folder, last scan, open pull requests, refused strings |
 | `lookup` | per text: key exists, translations, near duplicates, refused |
-| `check` | one file's user-facing strings and the file rewritten |
+| `check` | one file's user-facing strings and the file rewritten, in the project's key style (text or path keys) |
 | `localize` | every changed file in one call; files and catalogs back, or a patch with `format: "patch"`; 30 files a call, the rest in `deferred` |
 | `translate` | keys into the catalogs |
 | `verify` | one language's catalog audited |
