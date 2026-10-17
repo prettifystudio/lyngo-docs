@@ -5,7 +5,15 @@ description: "Keys, formats, plural forms, glossary, refused strings, translatio
 
 ## Keys
 
-The source text is the key. `"Save changes": "Enregistrer les modifications"`. A key that exists is reused; `lookup` tells an agent so before it writes. Dot keys (`auth.failed`) are references to framework files and are left alone.
+Your convention wins. Lyngo reads your primary catalog and follows the style it finds.
+
+**Text keys.** The source text is the key: `"Save changes": "Enregistrer les modifications"`. The default for a project without catalogs.
+
+**Path keys.** When most of your keys are paths (`pages.invoices.title`), new keys are paths too. The group is the one the file already uses most, else the file's path: `Pages/Invoices/Create.jsx` gives `pages.invoices-create`. The leaf is a slug of the text: `pages.invoices-create.shipping_date`. The catalog is written nested, inside your groups, with every existing value and the order kept. On the Laravel side the same rule writes `lang/en/errors.php` for a view under `views/errors`.
+
+A key that exists is reused in both styles; `lookup` tells an agent so before it writes. A dot key the code already calls (`auth.failed`) is a reference: it is never invented, and a reference no catalog holds is listed on the scan page.
+
+The style is read from the catalog. To force it, set **Key style** in the project settings: Auto, Text keys or Path keys.
 
 ## Formats
 
