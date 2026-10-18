@@ -4,7 +4,7 @@ description: "Localize and translate what changed in the working tree."
 ---
 
 ```sh
-lyngo localize [--languages fr,de] [--no-translate] [--dry]
+lyngo localize [--all] [--languages fr,de] [--no-translate] [--dry]
 ```
 
 Reads the files you changed, sends them with the catalogs, applies the patch, prints the report. Nothing is committed.
@@ -48,3 +48,7 @@ Some teams wrap with Lyngo and translate with people. `--no-translate` does that
 ## After
 
 `git diff` shows the change. Commit when you are happy. With Claude Code, the plugin's Stop hook runs this command at the end of a task and the agent shows you the report.
+
+## The whole repository
+
+`lyngo localize --all` takes every source file a scan would read, not only the changed ones: the project's frameworks, without vendor, build output, tests and configuration. The server picks the paths with the scan's own rules. The CLI sends them in batches of thirty, applies each patch before the next batch, and prints a line per batch. The keys, the translation memory and the glossary keep the batches consistent. At the end the result sits in your working tree: review it with `git diff` and commit. No pull request. Run it once on a repository that was never localized; afterwards the hook and the plain `lyngo localize` cover what changes.
