@@ -62,7 +62,7 @@ Claude Code: the lyngo MCP server is registered for this repository, and the Sto
 Done. Build as usual; lyngo localize runs when your agent finishes, or run it yourself before committing.
 ```
 
-- **GitHub**: if the Lyngo app does not cover the repository yet, `init` sends you to the page that installs it and waits. On GitHub, that is the Lyngo app, Configure, Repository access, add the repository.
+- **GitHub**: if the Lyngo app cannot read the repository yet, `init` prints the GitHub page where you add it: pick the account, add the repository under Repository access, save. In a terminal it waits until you have. Run from an agent or a script, it stops there instead, and the next `lyngo init` continues.
 - **Detection** reads the branch on GitHub. Push first for an exact result.
 - **Scaffolding**: when the project has no i18n setup, `init` adds it to your working tree as a patch: the library in `package.json`, the entry point wiring, the catalog folder. It prints the one install command to run. It never runs installers.
 - **Languages**: `--languages` names the target languages. The source stays English unless you pass `--primary`.
