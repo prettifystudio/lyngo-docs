@@ -7,7 +7,7 @@ description: "The plugin: a hook that localizes at the end of a task, and three 
 
 ## What the agent gets
 
-- **A Stop hook** that runs `lyngo localize` when a task ends. The agent sees the ten-line report and shows it to you. The files never pass through the model.
+- **A Stop hook** that runs `lyngo localize --hook` when a task ends. You see one line, such as `Lyngo: 8 strings localized in 3 files, 7 new keys; fr: 7 translated`. The agent gets the full report and tells you in a sentence or two what Lyngo changed. When nothing changed since the last run, the hook says nothing, and it never sends the same file content twice. The files never pass through the model.
 - **Three MCP tools** at `https://lyngo.app/mcp`, for the moment the agent writes text:
   - `status`: languages, library, catalog folder, refused strings.
   - `lookup`: for each text, whether a key exists, its translations, near duplicates, and whether the team refused it. The agent reuses a key instead of inventing one.

@@ -4,7 +4,7 @@ description: "Localize and translate what changed in the working tree."
 ---
 
 ```sh
-lyngo localize [--all] [--languages fr,de] [--no-translate] [--dry]
+lyngo localize [--all] [--languages fr,de] [--no-translate] [--dry] [--hook]
 ```
 
 Reads the files you changed, sends them with the catalogs, applies the patch, prints the report. Nothing is committed.
@@ -24,6 +24,7 @@ lyngo: 12 strings localized in 3 files; 9 new keys, 3 reused.
 - **new keys**: added to the primary catalog. **reused**: already there; the translation existed too.
 - **per file**: the strings wrapped there, the first six.
 - **per language**: `translated` by the translator, `from memory` from the workspace's translation memory, `flagged for review` by the verifier (a placeholder moved, a plural form missing, a register mismatch, a cut phrase). A flagged value is still written; read it before you commit.
+- **path keys no catalog holds**: path keys such as `auth.failed` that a file calls and no catalog has. Shown only when there are some; add the key or fix the call.
 
 When nothing needs to change: `lyngo: nothing changed in the working tree.` or `Nothing to change: every string a person reads already goes through an i18n call.`
 
@@ -40,6 +41,7 @@ The server takes 30 files per call. With more, the CLI makes several calls and c
 | `--languages fr,de` | fill only these languages this time |
 | `--no-translate` | wrap and add the keys only; leave the other languages' catalogs to your translators |
 | `--dry` | print the patch instead of applying it |
+| `--hook` | the Claude Code Stop hook mode (see below) |
 
 ## Localization without translation
 
@@ -47,7 +49,11 @@ Some teams wrap with Lyngo and translate with people. `--no-translate` does that
 
 ## After
 
-`git diff` shows the change. Commit when you are happy. With Claude Code, the plugin's Stop hook runs this command at the end of a task and the agent shows you the report.
+`git diff` shows the change. Commit when you are happy. With Claude Code, the Stop hook runs this command at the end of a task.
+
+## In the Claude Code hook
+
+`lyngo localize --hook` is the command the Stop hook runs. It sends only the files whose content changed since its last run, and prints one JSON object for Claude Code: a line for you, and the full report for the agent, which tells you what changed. With nothing new to send it prints nothing, and a failure (not logged in, no project, a network error) comes back as a line with the fix instead of a hook error.
 
 ## The whole repository
 
