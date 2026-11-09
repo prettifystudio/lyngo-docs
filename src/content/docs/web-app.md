@@ -9,7 +9,7 @@ The terminal is where localization happens. The web app at [lyngo.app](https://l
 - **Editor**: translators and reviewers work key by key, with comments, an in-review state, and manual values that no scan overwrites. Changes reach the repository through a pull request.
 - **Glossary**: account terms and project terms, with the gender of each rendering where the language needs it.
 - **Refused strings**: what the team took out of localization, and "Allow again".
-- **Settings**: languages, the i18n setup, YOLO mode, notifications, billing, members.
+- **Settings**: languages, the i18n setup, YOLO mode, notifications, billing.
 - **Settings, CLI**: your personal tokens from `lyngo login`, with Revoke.
 - **Settings, Agents**: project tokens for MCP clients without a CLI.
 
