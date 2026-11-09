@@ -45,7 +45,7 @@ Terms that must be translated one fixed way, and terms that are never translated
 
 ## Refused strings
 
-Texts your team took out of localization. Lyngo learns them when a Lyngo pull request is trimmed before merge or reverted, and you can set them by hand in the web app or with the `refuse` tool. Scans, `localize` and `lookup` all honour them. "Allow again" removes one.
+Texts your team took out of localization. Lyngo learns them when a Lyngo pull request is trimmed before merge or reverted, and you can set them by hand in the web app. Scans, `localize` and `lookup` all honour them. "Allow again" removes one.
 
 ## Translation memory
 

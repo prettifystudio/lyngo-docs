@@ -26,7 +26,7 @@ description: "Environment variables and files the CLI uses."
 ## Limits
 
 - 60 calls a minute per token.
-- 100 files per `localize` job (30 for a call without `async`); the CLI loops.
+- 100 files per `localize` job; the CLI loops.
 - 50 read-only context files per `localize` call, 512 KB each.
 - 100 keys per `translate` chunk; the CLI loops.
 - Login codes expire after 15 minutes and work once.

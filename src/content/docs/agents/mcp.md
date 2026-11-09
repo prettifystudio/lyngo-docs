@@ -8,7 +8,7 @@ Lyngo speaks MCP over HTTP. Two servers, one token:
 | server | tools | for |
 |---|---|---|
 | `https://lyngo.app/mcp` | `status`, `lookup`, `check` | agents, while they write |
-| `https://lyngo.app/mcp/admin` | all twenty-two | the CLI, and clients that cannot run one |
+| `https://lyngo.app/mcp/admin` | all seven: the three above and `localize`, `translate`, `job_status`, `select_files` | the CLI, and clients that cannot run one |
 
 Send the token and the repository with every request:
 
@@ -25,6 +25,6 @@ Cursor-style configuration:
 { "mcpServers": { "lyngo": { "type": "http", "url": "https://lyngo.app/mcp", "headers": { "Authorization": "Bearer lyn_…", "X-Lyngo-Remote": "git@github.com:acme/shop.git" } } } }
 ```
 
-The admin server's write tools (`scan`, `open_pr`, `revert`, `translations_pr`, `quality_check`, `glossary_set`, `glossary_delete`, `refuse`) refuse to run without `"confirm": true`, so an agent must ask you first. `localize` there takes 30 files a call and returns either the rewritten files or, with `"format": "patch"`, one unified diff. With `"async": true` it queues a job of up to 100 files and answers with a job id; `job_status` gives the result. An answer with `needs` asks for working-tree files as read-only `context`; see [MCP tools](/reference/mcp-tools/#localize). Prefer the CLI when you can run one: it keeps the files out of the model.
+`localize` there needs `"async": true`: it queues a job of up to 100 files and answers with a job id; `job_status` gives the result, either the rewritten files or, with `"format": "patch"`, one unified diff. An answer with `needs` asks for working-tree files as read-only `context`; see [MCP tools](/reference/mcp-tools/#localize). Prefer the CLI when you can run one: it keeps the files out of the model.
 
 The full list is in [MCP tools](/reference/mcp-tools/).

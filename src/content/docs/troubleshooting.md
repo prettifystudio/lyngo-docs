@@ -29,6 +29,7 @@ description: "Every message the CLI can print, and what to do."
 | `too many calls. Wait a minute and try again.` | 60 calls a minute per token. |
 | `xx is not one of the project's languages` | `lyngo init --languages …` first. |
 | `Lyngo: the CLI is not on PATH. Install it: npm i -g @prettifystudio/lyngo-cli` | The Stop hook cannot find `lyngo`. Install the CLI. |
+| `This lyngo CLI is too old. Update it: npm i -g @prettifystudio/lyngo-cli` | CLI 0.2.6 and older. Run the command it prints. |
 
 ## Warnings in the report
 
