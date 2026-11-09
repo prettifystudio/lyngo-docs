@@ -20,6 +20,8 @@ npm i -g @prettifystudio/lyngo-cli
 lyngo --version
 ```
 
+When a newer version is available, the CLI tells you. See [Updates](#updates).
+
 ## 3. Log in
 
 ```sh
@@ -94,6 +96,31 @@ See [lyngo localize](/commands/localize/).
 ## 6. Push
 
 Push as usual. The GitHub App scans every push to the project's branch. When it finds strings the CLI did not cover, it opens one pull request with the rewrites, the keys and the catalogs. Merge it or close it. See [Pull requests](/pull-requests/).
+
+## Updates
+
+The CLI tells you when a newer version is on npm. It prints one line, at most once a day for each new version:
+
+```text
+Lyngo CLI 0.2.13 is available (you have 0.2.12): npm i -g @prettifystudio/lyngo-cli
+```
+
+To update, run the command in the line:
+
+```sh
+npm i -g @prettifystudio/lyngo-cli
+```
+
+- The line goes to stderr. The output of the command stays on stdout without it, for example the patch of `lyngo localize --dry`.
+- In Claude Code, the Stop hook adds the line to the line it shows you, and to the report for the agent when there is one.
+- When your CLI is older than the oldest version Lyngo accepts, Lyngo refuses it. Each command stops with exit code 1 and this message:
+
+  ```text
+  lyngo: This lyngo CLI (0.2.12) is too old; Lyngo needs 0.2.13 or newer. Update it: npm i -g @prettifystudio/lyngo-cli
+  ```
+
+  Run the command in the message, then run your command again. In Claude Code, the hook shows the same message and tells the agent to give you the update command.
+- CLIs before 0.2.12 do not send their version to Lyngo, so they never show the update line. Update them once with the command above.
 
 ## Next
 

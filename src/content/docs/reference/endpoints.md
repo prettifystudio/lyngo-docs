@@ -19,3 +19,20 @@ Base: `https://lyngo.app`. JSON in and out. Authenticated calls carry `Authoriza
 | `POST /mcp/admin` | token | JSON-RPC `tools/call` for every tool; `localize` and `translate` with `async: true` answer `{job, status}`, then `job_status` gives the result (see [MCP tools](/reference/mcp-tools/#jobs-async-and-job_status)) |
 
 Rate limits answer `429`. A refused token answers `401`. A project the token cannot see answers `404`.
+
+## Versions
+
+Since CLI 0.2.12, every call carries `User-Agent: lyngo-cli/<version> (node <node version>; <platform>)`. For such a call, the answers of `/cli/*` and `/mcp/admin` carry two headers:
+
+| header | value |
+|---|---|
+| `X-Lyngo-Cli-Latest` | the newest CLI on npm, for example `0.2.13` |
+| `X-Lyngo-Cli-Minimum` | the oldest CLI Lyngo accepts; not sent when Lyngo accepts every version |
+
+A CLI below the minimum gets `426`, on `/cli/*` and on `/mcp/admin` alike, as plain JSON (not a JSON-RPC error, like the `401` and `404` of `/mcp/admin`):
+
+```json
+{"error": "cli_too_old", "message": "This lyngo CLI (0.2.12) is too old; Lyngo needs 0.2.13 or newer. Update it: npm i -g @prettifystudio/lyngo-cli"}
+```
+
+A call without that User-Agent never gets the headers or the `426`. See [Updates](/get-started/#updates).

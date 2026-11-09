@@ -8,6 +8,7 @@ description: "Environment variables and files the CLI uses."
 | path | holds |
 |---|---|
 | `~/.config/lyngo/token` | the personal token from `lyngo login`, mode 600 |
+| `~/.config/lyngo/update-notice.json` | the last [update line](/get-started/#updates) the CLI printed and when, so it prints it at most once a day |
 | `.claude/settings.local.json` | the Stop hook, written by `lyngo init`; git ignores it |
 | `.git/lyngo-hook.json` | the files the Stop hook sent, by content, so it sends only what changed since its last run |
 | `~/.claude.json` | the `lyngo` MCP server in local scope for this repository |

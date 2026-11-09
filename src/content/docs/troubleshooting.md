@@ -30,6 +30,8 @@ description: "Every message the CLI can print, and what to do."
 | `xx is not one of the project's languages` | `lyngo init --languages …` first. |
 | `Lyngo: the CLI is not on PATH. Install it: npm i -g @prettifystudio/lyngo-cli` | The Stop hook cannot find `lyngo`. Install the CLI. |
 | `This lyngo CLI is too old. Update it: npm i -g @prettifystudio/lyngo-cli` | CLI 0.2.6 and older. Run the command it prints. |
+| `This lyngo CLI (0.2.12) is too old; Lyngo needs 0.2.13 or newer. Update it: npm i -g @prettifystudio/lyngo-cli` | Lyngo does not accept this version any more. Run the command it prints, then your command again. See [Updates](/get-started/#updates). |
+| `Lyngo CLI 0.2.13 is available (you have 0.2.12): npm i -g @prettifystudio/lyngo-cli` | A newer CLI is on npm. Run the command when it suits you. The line comes at most once a day. See [Updates](/get-started/#updates). |
 
 ## Warnings in the report
 
