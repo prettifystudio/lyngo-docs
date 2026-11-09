@@ -16,16 +16,19 @@ Both run the same engine with the same memory: keys, glossary, refused strings, 
 `lyngo localize` sends:
 
 - the source files changed in the working tree (`git status`), limited to views, components and PHP, and never `vendor`, `node_modules`, tests, config, storage or public folders;
-- the catalog files of the project's languages, as they are on disk;
-- the git remote, so the server knows which project you mean.
+- the catalog files of the project's languages, as they are on disk: the JSON catalogs and Laravel's `lang/<code>/*.php`;
+- the git remote, so the server knows which project you mean;
+- when an answer asks for them in `needs`, the source files a decision reads, as read-only context: at most 50, of 512 KB each at most.
 
-`lyngo init` sends `package.json`, `composer.json` and the files the server names when it builds the setup patch. Detection itself reads the branch on GitHub through the App.
+The engine reads the other files it needs (a component's definition, an enum, a model) from the project's branch on GitHub, through the App. It never edits them. `lyngo localize --all` also sends the list of tracked paths, so the server can pick the files a scan would read.
+
+`lyngo init` sends `package.json`, `composer.json`, the list of the repository's file paths, and the files the server names when it builds the setup patch. Detection itself reads the branch on GitHub through the App.
 
 Nothing else is read. There is no daemon, no file watcher, no telemetry.
 
 ## What comes back
 
-A patch, and a report. The patch holds the rewritten files and the updated catalogs, as a unified diff against what you sent. The report says what was wrapped per file, which keys were added and which reused, and per language how many values were translated, how many came from translation memory, and which ones the verifier flagged for review.
+A patch, and a report. The patch holds the rewritten files and the updated catalogs, as a unified diff against what you sent. The report says what was wrapped per file, which keys were added and which reused, and per language how many values were translated, how many came from translation memory, and which ones the verifier flagged for review. Its warnings name what the engine left as written, and why.
 
 The agent, when there is one, sees only the report: ten lines. The files never pass through the model. That is why the CLI path costs less than letting the agent localize by hand; the number is on the [landing page](https://lyngo.app).
 
@@ -35,6 +38,7 @@ The agent, when there is one, sees only the report: ten lines. The files never p
 2. **The key.** The source text is the key. A key that exists is reused; a near duplicate (a different case or trailing punctuation) is pointed to the existing one.
 3. **The call.** The framework's own call, in the right scope: `__()` in Blade and PHP, `t()` from `useTranslation()` in React, `$t()` in Vue templates, `$_()` in Svelte, `i18next.t()` or `i18n.global.t` at module scope where a hook cannot run.
 4. **The catalogs.** Every language gets the new keys. Values come from translation memory first, then the translator with the project's glossary, then the verifier: placeholders, plural forms per language, script, truncation, register.
+5. **Beyond strings.** A sentence whose part is picked by a condition becomes one whole sentence per branch (see [Sentences with a condition](/frameworks/javascript/#sentences-with-a-condition)). A backed enum that shows its raw value gets a translated `getLabel()`, and the places that show it use the label (see [Enum labels](/frameworks/enum-labels/)). What the engine leaves as written, it names in the report.
 
 ## Localization and translation are separate
 

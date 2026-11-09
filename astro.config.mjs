@@ -47,6 +47,7 @@ export default defineConfig({
 					items: [
 						{ label: 'Laravel: Blade, Livewire, PHP', slug: 'frameworks/laravel' },
 						{ label: 'React, Vue, Svelte, Inertia', slug: 'frameworks/javascript' },
+						{ label: 'Enum labels', slug: 'frameworks/enum-labels' },
 					],
 				},
 				{ label: 'Catalogs and translation', slug: 'catalogs' },

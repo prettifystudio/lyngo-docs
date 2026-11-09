@@ -48,25 +48,27 @@ What happens, in order:
 
 ```text
 Workspace: Acme
-Connect GitHub so Lyngo can read acme/shop. Open https://lyngo.app/source-control and install the Lyngo app on that repository.
+The Lyngo GitHub App cannot read acme/shop yet. Open the link, pick the account that owns the repository, add acme/shop under Repository access, and save.
+  https://github.com/apps/…/installations/new?state=…
+Open it now? [Y/n] y
 Waiting for GitHub (up to 10 minutes)...
 GitHub is connected.
 Created shop in workspace Acme.
 Detected: vue, vue-i18n, catalogs in lang
+Claude Code: the lyngo MCP server is registered for this repository, and the Stop hook is in .claude/settings.local.json.
 Languages: en -> fr, de
 Scaffolding: nothing to add.
 No catalog yet for de: lang/de.json is missing, and en.json holds 102 keys that need translating.
 Translate it now? [Y/n] y
 de: 67 translated, 35 from memory -> lang/de.json
-Claude Code: the lyngo MCP server is registered for this repository, and the Stop hook is in .claude/settings.local.json.
 Done. Build as usual; lyngo localize runs when your agent finishes, or run it yourself before committing.
 ```
 
-- **GitHub**: if the Lyngo app cannot read the repository yet, `init` prints the GitHub page where you add it: pick the account, add the repository under Repository access, save. In a terminal it waits until you have. Run from an agent or a script, it stops there instead, and the next `lyngo init` continues.
+- **GitHub**: if the Lyngo app cannot read the repository yet, `init` prints the GitHub page where you add it: pick the account, add the repository under Repository access, save. It waits, and continues by itself once you have: up to 10 minutes in a terminal, 9 when an agent or a script runs it. In CI, or with `--no-wait`, it stops there instead, and the next `lyngo init` continues.
 - **Detection** reads the branch on GitHub. Push first for an exact result.
-- **Scaffolding**: when the project has no i18n setup, `init` adds it to your working tree as a patch: the library in `package.json`, the entry point wiring, the catalog folder. It prints the one install command to run. It never runs installers.
+- **Agent**: when Claude Code is installed, `init` registers the Lyngo MCP server for this repository and adds a hook that runs `lyngo localize` at the end of every task. The hook lives in `.claude/settings.local.json`, which is not committed; the MCP server lives in Claude Code's local scope. If you run `init` from inside a Claude Code session, restart the session if the hook does not run.
 - **Languages**: `--languages` names the target languages. The source stays English unless you pass `--primary`.
-- **Agent**: when Claude Code is installed, `init` registers the Lyngo MCP server for this repository and adds a hook that runs `lyngo localize` at the end of every task. Both live in `.claude/settings.local.json`, which is not committed.
+- **Scaffolding**: when the project has no i18n setup, `init` adds it to your working tree as a patch: the library in `package.json`, the entry point wiring, the catalog folder, the Laravel locale wiring. When the patch edits `package.json`, `init` runs the install (`npm install`, `pnpm install`, `yarn install` or `bun install`, from your lockfile); restart your dev server after it. `--no-install` prints the command instead.
 
 See [lyngo init](/commands/init/).
 

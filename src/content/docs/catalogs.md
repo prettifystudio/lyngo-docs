@@ -27,6 +27,14 @@ New values come, in order, from:
 2. **The translator**, with the project's context (what the app is), the glossary terms present in the batch, the UI element the string sits in (a column header is a noun phrase, a button an imperative), the placeholders' meaning, and the sibling values in other languages when they exist.
 3. **The verifier**, which checks every value: placeholders present and not invented, plural forms for the language, script, truncation, register (one form of address throughout), glossary terms used, and spelling. What it cannot fix it flags.
 
+## Keys a language lacks
+
+Laravel reads `lang/<code>.json` with no fallback to the primary file: a key the French file lacks shows as the key itself. So when `localize` translates, each target catalog also gets the primary's keys it lacks, translated from the primary's text. A call translates a limited number of keys per language, the call's own keys first; the report names the rest: `de: 40 keys not translated yet (…): run lyngo translate de`.
+
+## Machine text
+
+A catalog value that a program reads (a shell command, a path or a URL alone, a date format) is copied unchanged into every language, never sent to the translator, and named in the report. Lyngo never makes a new key of such a text: the code keeps it as written.
+
 ## Plural forms
 
 Every language gets the categories it uses: French and Portuguese `one` and `other`; Russian, Polish and Czech `one`, `few`, `many`, `other`; Arabic six; Japanese, Chinese and Turkish one. In Arabic the dual never carries the digit as well.

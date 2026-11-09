@@ -16,6 +16,6 @@ Base: `https://lyngo.app`. JSON in and out. Authenticated calls carry `Authoriza
 | `POST /cli/projects/{id}/detect` | token | the i18n setup, read from the branch on GitHub |
 | `PATCH /cli/projects/{id}` | token | `{languages, primary_language}` |
 | `POST /cli/projects/{id}/scaffold` | token | `{tree, files}` → `{patch, install_command, notes}`; `409 {needs: [paths]}` asks for more files |
-| `POST /mcp/admin` | token | JSON-RPC `tools/call` for every tool |
+| `POST /mcp/admin` | token | JSON-RPC `tools/call` for every tool; `localize` and `translate` with `async: true` answer `{job, status}`, then `job_status` gives the result (see [MCP tools](/reference/mcp-tools/#jobs-async-and-job_status)) |
 
 Rate limits answer `429`. A refused token answers `401`. A project the token cannot see answers `404`.

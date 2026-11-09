@@ -19,6 +19,16 @@ The rules that keep an app from breaking:
 - Inertia entry files are shared by the server render; the setup registers the plugin through `withApp` or an existing `setup()` and never calls `createApp` or `mount`.
 - Text split by `<br/>` or inline elements becomes one key with element placeholders.
 
+## Sentences with a condition
+
+A condition can pick a part of a sentence: ``Showing {from} to {to} {total && ` of ${total}`} results``. One key with the English part inside a value breaks every other language. So Lyngo makes one whole sentence per branch, `Showing {{0}} to {{1}} of {{2}} results` and `Showing {{0}} to {{1}} results` (the placeholders follow your library), and writes the condition around two calls. `cond && <text>` and `cond ? <text> : ''` work this way. A condition between two plain texts (`active ? 'Active' : 'Inactive'`) keeps its own value.
+
+- The same applies when the sentence is already an i18n call with the condition in its values: the call becomes two calls, one per branch.
+- A sentence with two such conditions is left as written and named in the report. Lyngo never makes one sentence per combination. A call it cannot split (a key that is not the text, the part used twice, a plural) is left as written and named too.
+- The keys a rewritten call stops using stay in the catalogs, because another file may still call them. The report names them; delete them when no file calls them.
+
+The same rules apply in React, Vue and Svelte.
+
 ## Plurals
 
 i18next gets `_one` and `_other` keys and the categories each language uses; vue-i18n gets `one | other` pipes; svelte-i18n gets ICU `{count, plural, …}`. Values are written with every category the target language has.

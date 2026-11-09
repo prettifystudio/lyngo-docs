@@ -7,14 +7,18 @@ description: "The plugin: a hook that localizes at the end of a task, and three 
 
 ## What the agent gets
 
-- **A Stop hook** that runs `lyngo localize --hook` when a task ends. You see one line, such as `Lyngo: 8 strings localized in 3 files, 7 new keys; fr: 7 translated`. The agent gets the full report and tells you in a sentence or two what Lyngo changed. When nothing changed since the last run, the hook says nothing, and it never sends the same file content twice. The files never pass through the model.
+- **A Stop hook** that runs `lyngo localize --hook` when a task ends. You see one line, such as `Lyngo: 8 strings localized in 3 files, 7 new keys; fr: 7 translated`. When the patch changed files without a wrapped string, the line counts them: `Lyngo: 3 files changed (enum labels)`. The agent gets the full report and tells you in a sentence or two what Lyngo changed. When nothing changed since the last run, the hook says nothing, and it never sends the same file content twice (it keeps its state in `.git/lyngo-hook.json`). It runs in the project where the session started (`$CLAUDE_PROJECT_DIR`), even when the agent works in another folder. The files never pass through the model.
 - **Three MCP tools** at `https://lyngo.app/mcp`, for the moment the agent writes text:
   - `status`: languages, library, catalog folder, refused strings.
   - `lookup`: for each text, whether a key exists, its translations, near duplicates, and whether the team refused it. The agent reuses a key instead of inventing one.
   - `check`: one file's user-facing strings.
 - **A skill** that tells the agent when to use each, and what is never copy: logs, exceptions, HTTP clients, prompts, commit messages, cache keys.
 
-Both are registered in `.claude/settings.local.json`, local to this repository and not committed. The MCP server is added in local scope; `claude mcp list` shows it as `lyngo`.
+The hook is in `.claude/settings.local.json`, local to this repository and not committed. The MCP server is added in Claude Code's local scope; `claude mcp list` shows it as `lyngo`.
+
+A hook that `lyngo init` adds while a Claude Code session runs may not run in that session. If it does not run when a task ends, restart the session.
+
+After `lyngo localize --all`, commit before the next task: the hook sends every file it has not seen yet, the `--all` result too.
 
 ## The plugin
 
