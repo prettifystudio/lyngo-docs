@@ -20,7 +20,13 @@ description: "Every message the CLI can print, and what to do."
 | `the languages were not saved.` | The message above it says why: the plan, a scan in progress, a code Lyngo does not know. |
 | `the server asked for files this working tree does not have` | The setup needs a file that is not in your checkout. Pull, then `lyngo init`. |
 | `npm is not installed, so the new packages are not.` or `npm install failed (exit 1).` | Run the install command it prints in the repository, then restart your dev server. |
-| `the patch did not apply (…); it is at /tmp/lyngo-….patch` | Your working tree changed between the read and the write. Apply the patch by hand or run `lyngo localize` again. |
+| `the patch did not apply as a whole; each file alone:`, then `failed: <path> (<git's reason>)` | Your working tree changed between the read and the write. The CLI applied the other files and ends with exit code 1. Apply the failed blocks by hand from `/tmp/lyngo-failed-….patch`, or run `lyngo localize` again. See [A patch that does not apply](/commands/localize/#a-patch-that-does-not-apply). |
+| `converted to UTF-8 (was Windows-1252): <path>` | Nothing: the file is now UTF-8, and its charset declaration says UTF-8. Commit it. A scan of a push shows `Some files were converted to UTF-8`; the pull request holds the converted files. |
+| `left as written, not UTF-8: <path>` | Lyngo reads and writes UTF-8 only. Convert the file to UTF-8, then run the command again. A scan of a push shows `Some files are not UTF-8, so they were left as written`. |
+| `nothing sent; 2 files are not UTF-8.` or `<file> is not UTF-8; it is not sent, and left as written.` | Convert the files to UTF-8, then run the command again. |
+| `Left as written, not UTF-8: <paths>. Lyngo reads UTF-8 only; convert the file, then run lyngo init again.` | `lyngo init` cannot build the setup on these files. Convert them to UTF-8, then run `lyngo init` again. |
+| `<path> is a submodule: commit it there too` | Lyngo changed files inside a git submodule. Commit them in the submodule's repository too. |
+| `Laravel lang files added: lang/fr/auth.php, …` | Nothing: Laravel's own messages for that language. Commit them with the catalogs. |
 | `connection problem (…), trying again in 2 s (1/4).` | Nothing: the CLI tries again after 2, 5 and 10 seconds. |
 | `could not reach https://lyngo.app (…).` | The network failed on every try. Check your connection and run the command again. |
 | `the server did not finish within 65 minutes (job …). Run the command again later.` | The job is still on the server. Run the command again later; `LYNGO_JOB_TIMEOUT` sets a longer wait. |
@@ -50,6 +56,8 @@ description: "Every message the CLI can print, and what to do."
 | `Machine text in your catalog, copied unchanged: <key> (consider building it in code, not in translations)` | The value is a command, a path, a URL or a format. Every language gets it as it is, never translated. Move it into code when you can. |
 | `Not added to the catalog, machine text: <key>` | The text is for a program, not a person. The code keeps it as written. Nothing to do. |
 | `mixed-language source: <path>:<line>` | A condition on the locale picks between texts and could not become one key. Use one key and put the other text in that language's catalog. |
+| `Left as written: react-intl text no hook can format with the catalogs, …` | The text is outside a component in an app without the shared `intl` instance (an app with its own root provider), or under a file's own `IntlProvider` that reads its locale or formats in its own way. Move it into a component under the app's provider, then run `lyngo localize` again. |
+| `Some folders are git submodules, so they were not localized` (scan of a push) | A submodule's files live in another repository, so the GitHub App cannot change them. Run `lyngo localize --all` in your working tree, then commit the change in the submodule's repository too. |
 | `Judged by its content only (the repository could not be read in full): <view>` | Lyngo could not read the code that renders the view. Run the command again. |
 
 `lyngo init` can print one more note, after the setup patch:

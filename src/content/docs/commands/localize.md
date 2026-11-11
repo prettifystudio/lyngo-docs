@@ -31,6 +31,9 @@ lyngo: 12 strings localized in 3 files; 9 new keys, 3 reused.
 - **path keys no catalog holds**: path keys such as `auth.failed` that a file calls and no catalog has. Shown only when there are some; add the key or fix the call.
 - **not translated yet**: `de: 40 keys not translated yet ("…", …): run lyngo translate de`. A call translates a limited number of keys per language; the keys over that limit wait for the next run or for `lyngo translate`.
 - **skipped**: `skipped <path>: <reason>`, a path the server refused.
+- **Laravel lang files added**: `Laravel lang files added: lang/fr/auth.php, …`, the stock Laravel files (`auth.php`, `pagination.php`, `passwords.php`, `validation.php`) that the patch added where they were missing.
+- **encoding**: `converted to UTF-8 (was Windows-1252): <path>` and `left as written, not UTF-8: <path>`. See [Which files](#which-files).
+- **submodules**: `<path> is a submodule: commit it there too`. See [Which files](#which-files).
 - **warnings (N)**: texts left as written, values a database may store, machine text, keys no longer used, [enum labels](/frameworks/enum-labels/) left out. The first 10 are shown, then `… and N more`. [Troubleshooting](/troubleshooting/#warnings-in-the-report) says what to do for each.
 
 When no file changed: `lyngo: nothing changed in the working tree.` When the server sends no patch back: `Nothing to change: every string a person reads already goes through an i18n call.`
@@ -39,6 +42,10 @@ When no file changed: `lyngo: nothing changed in the working tree.` When the ser
 
 Changed files from `git status`, tracked or not, with these extensions: `.blade.php`, `.php`, `.tsx`, `.jsx`, `.ts`, `.js`, `.vue`, `.svelte`. Never under `vendor`, `node_modules`, `tests`, `database`, `storage`, `bootstrap`, `public`, `config` or `.git`.
 
+Lyngo reads and writes UTF-8 only. Since CLI 0.2.14, a Windows-1252 file is converted to UTF-8 on disk before it is sent; its charset declaration then says UTF-8 too. The report names it: `converted to UTF-8 (was Windows-1252): <path>`. A file in another encoding is not sent and stays as it is. The report names it: `left as written, not UTF-8: <path>`.
+
+Since CLI 0.2.14, the files of checked-out git submodules are sent too, with `--all` and as changed files. Their keys go to the app's catalogs. The report names each submodule that changed: `<path> is a submodule: commit it there too`. Commit the change in the submodule's repository too. A scan of a push cannot change a submodule; it names the submodules in a warning instead.
+
 With the files go the catalogs from disk: the JSON catalogs of both catalog folders (Laravel's `lang` and the front-end's own, when they differ) and Laravel's `lang/<code>/*.php`. The CLI reads them again before every call.
 
 ## Jobs on the server
@@ -46,6 +53,24 @@ With the files go the catalogs from disk: the JSON catalogs of both catalog fold
 Since CLI 0.2.7, each call is a job on the server. The CLI sends the call, gets a job id at once, and asks for the job's state every 2.5 seconds until it is done. While it waits it prints `... Lyngo is still working (running, 30 s)` every 15 seconds. It waits up to 65 minutes; `LYNGO_JOB_TIMEOUT` sets another limit in seconds.
 
 A job takes up to 100 files. With more, the server names the rest, and the CLI sends them in the next job with the catalogs as they are on disk then. The files of one enum (the enum, its models, resources, types and the components that read it) go in the same job. You see one report.
+
+## A patch that does not apply
+
+Your working tree can change between the read and the write. Since CLI 0.2.13, when the patch does not apply as a whole, the CLI applies it file by file and names each file:
+
+```text
+  the patch did not apply as a whole; each file alone:
+    applied: resources/views/welcome.blade.php
+    failed: app/Http/Controllers/HomeController.php (patch failed: app/Http/Controllers/HomeController.php:12; …)
+lyngo: 1 file not changed, the patch did not apply: app/Http/Controllers/HomeController.php. The blocks are at /tmp/lyngo-failed-….patch
+```
+
+- The reason in brackets comes from git.
+- A file that failed keeps its content. Its blocks stay in the file that the last line names.
+- The command ends with exit code 1. The hook mode always ends with exit code 0.
+- With `--all`, the first line names the batch (`batch 2: the patch did not apply as a whole; …`), and the next batch goes on.
+
+Run `lyngo localize` again to send the failed files again, or apply their blocks by hand.
 
 ## Reading the repository
 

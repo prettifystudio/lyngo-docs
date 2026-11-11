@@ -8,6 +8,7 @@ Replacements are made on the syntax tree, never with regular expressions, so JSX
 | framework | library | in components | at module scope |
 |---|---|---|---|
 | React | react-i18next | `const { t } = useTranslation();` then `t('…')` | `i18next.t('…')` with the import |
+| React | react-intl | `const intl = useIntl();` then `intl.formatMessage({ id: '…' }, values)` | the `intl` instance from `intl-setup.ts`, in lazy getters |
 | Vue, `<script setup>` | vue-i18n | `const { t } = useI18n();` then `t('…')`, `$t('…')` in templates | `i18n.global.t('…')` |
 | Vue, Options API | vue-i18n | `this.$t('…')` in methods, `$t('…')` in templates | `i18n.global.t('…')` |
 | Svelte | svelte-i18n | `$_('…')` | lazy getters |
@@ -29,9 +30,20 @@ A condition can pick a part of a sentence: ``Showing {from} to {to} {total && ` 
 
 The same rules apply in React, Vue and Svelte.
 
+## react-intl
+
+Lyngo supports react-intl in Inertia React apps.
+
+- Each component gets `const intl = useIntl();` and calls `intl.formatMessage({ id: '…' }, values)`.
+- Text with inline elements becomes one message with `<el0>…</el0>` chunks.
+- Catalog values are ICU: `{name}` for a value, `{count, plural, one {…} other {…}}` for a plural.
+- `lyngo init` adds `intl-setup.ts` and wires an `IntlProvider` at the app root through the Inertia entry (`withApp`). `intl-setup.ts` also exports a shared `intl` instance. Copy at module scope, such as `Page.layout = { title }` or a nav array, uses that instance in lazy getters.
+- A page-level `IntlProvider` with a fixed locale and inline messages is adopted: its messages move to the catalogs.
+- Text that no hook and no instance can reach is left as written and named in the report (`intl_left_as_written`).
+
 ## Plurals
 
-i18next gets `_one` and `_other` keys and the categories each language uses; vue-i18n gets `one | other` pipes; svelte-i18n gets ICU `{count, plural, …}`. Values are written with every category the target language has.
+i18next gets `_one` and `_other` keys and the categories each language uses; vue-i18n gets `one | other` pipes; svelte-i18n and react-intl get ICU `{count, plural, …}`. Values are written with every category the target language has.
 
 ## Catalogs
 
