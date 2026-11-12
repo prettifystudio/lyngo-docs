@@ -7,13 +7,21 @@ description: "What Lyngo wraps in a Laravel application, and how."
 
 Text in templates becomes `{{ __('Text') }}`; attributes that people read (`placeholder`, `title`, `alt`, `aria-label`) become `{{ __('…') }}` inside the quotes. Mixed runs of text and expressions become one key with placeholders. `@lang` and existing `__()` calls are left alone and their keys are counted as existing.
 
-A sentence with inline tags (`<a>`, `<strong>`, `<em>`, `<code>` and the like) becomes one key. The tags become `<el0>…</el0>` placeholders:
+A sentence with inline tags (`<a>`, `<strong>`, `<em>` and the like) becomes one key. The tags become `<el0>…</el0>` placeholders:
 
 ```blade
 {{ \App\Support\Lyngo::rich(__('By signing up you agree to our <el0>terms</el0>.'), ['<a href="/terms">']) }}
 ```
 
-The helper `app/Support/Lyngo.php` escapes the whole translation, then puts back only the view's own tags. A translation cannot add markup. `lyngo init` adds the helper; the first view that calls it adds it too when it is missing. The verifier checks the `<elN>` placeholders like the other placeholders.
+Code in a sentence is a value. The content of `<code>`, `<kbd>`, `<samp>`, `<var>` and `<pre>` becomes a named placeholder. The translation cannot change it:
+
+```blade
+{{ \App\Support\Lyngo::rich(__('Run :code to start the server.'), ['code' => '<code>npm run dev</code>']) }}
+```
+
+An element that holds only code is never copy. This applies to Blade views and Livewire views.
+
+The helper `app/Support/Lyngo.php` escapes the whole translation, then puts back only the view's own tags and named values. A translation cannot add markup. `lyngo init` adds the helper; the first view that calls it adds it too when it is missing. When the project has an older helper that Lyngo wrote, Lyngo replaces it. Lyngo never replaces an `app/Support/Lyngo.php` of your own. The verifier checks the `<elN>` placeholders like the other placeholders.
 
 A sentence stays whole around these parts:
 
@@ -25,11 +33,63 @@ A text next to a raw `{!! !!}` echo is kept whole, as written, and named in the 
 
 ## PHP
 
-String literals in controllers, requests, notifications, mail and Livewire classes that a person reads: validation messages, flash messages (`->with('success', 'Saved.')`), notification lines, the data of `view('x', [...])` and the messages of `ValidationException::withMessages()`. They become `__('…')`. Validation attribute names and rule strings, array keys, config keys, column names, route names, queue and event names, log messages, exception messages and anything sent to an HTTP client or a model prompt are never touched.
+String literals in controllers, requests, notifications, mail and Livewire classes that a person reads: validation messages, flash messages (`->with('success', 'Saved.')`), notification lines, the data of `view('x', [...])` and the messages of `ValidationException::withMessages()`. They become `__('…')`. Validation attribute names and rule strings, array keys, config keys, column names, route names, queue and event names, log messages, exception messages and anything sent to an HTTP client or a model prompt are never touched. See [AI prompts](#ai-prompts).
 
 A literal that a database write stores (`create`, `update`, `insert`, `fill`, `new Model([...])`, an attribute set and then saved) is never copy: a translated value would be stored in the language of the person who triggered the write. When Lyngo cannot prove what the write goes to, it leaves the literal as written and names it in the report (`Left as written, may be stored`).
 
 Count-dependent sentences become one `trans_choice()` key in pipe syntax, with the forms every target language needs (Arabic gets six, Russian three, Japanese one).
+
+A sentence built around `Str::plural()` or `str()->plural()` becomes one key for the whole sentence, in PHP, Blade and mail lines:
+
+```php
+'You have '.$n.' new '.Str::plural('task', $n).'.'
+```
+
+becomes `trans_choice('You have :count new task.|You have :count new tasks.', $n)`. A sentence with two different counts becomes one `__()` key. Each plural in it is a `trans_choice()` value.
+
+## Mail
+
+### Markdown mail views
+
+A Markdown mail view (`<x-mail::message>`, `@component('mail::message')`) is Markdown, not HTML. Each block is one key: a heading, a paragraph, a list item, a table cell, the text of a button, a panel, the subcopy, the salutation. Each block renders through the helper:
+
+```blade
+{{ \App\Support\Lyngo::markdown(__('Run :code, then [see pricing](:url).'), ['code' => '`npm run dev`', 'url' => 'https://example.com/pricing']) }}
+```
+
+- **Inline code** becomes a value (`:code`). The translation cannot change it.
+- **A link** keeps its text in the key. Its address becomes a value: `[see pricing](:url)`.
+- **A code block** and the layout (`#`, list markers, table pipes, indentation, component tags) stay as written.
+- **A translation cannot add** HTML, links, images or code blocks. The helper escapes the translation and keeps only the view's own links, bold and emphasis.
+
+The verifier checks that the link markers (`[…](:url)`) are in every translation.
+
+### MailMessage lines
+
+In a Notification or a Mailable, the text of `line()`, `lines()`, `lineIf()`, `linesIf()`, `greeting()`, `salutation()` and the text of `action()` follow the same rule:
+
+```php
+->line(\App\Support\Lyngo::markdown(__('Run :code, then [see pricing](:url).'), ['code' => '`npm run dev`', 'url' => 'https://example.com/pricing'], inline: true))
+```
+
+- **`subject()`** becomes a plain `__()`.
+- **A plural line** becomes `trans_choice()` inside the helper.
+- **A locale conditional** in a line becomes one key. See [Locale conditionals](#locale-conditionals).
+- **The data of `->markdown('view', [...])`** becomes a plain `__()`.
+- **`toSlack()`** is never localized. Slack messages stay in the source language.
+
+## AI prompts
+
+A prompt sent to an AI model is machine text. Lyngo keeps it as written, with its data, in PHP and Blade. React, Vue and Svelte follow the same rule (see [React, Vue, Svelte](/frameworks/javascript/)). Lyngo knows these clients:
+
+- openai-php, Prism, the Laravel AI SDK (the instructions of its agents), the Anthropic and Gemini PHP clients, NeuronAI, LarAgent;
+- `Http` posts to an AI endpoint;
+- role messages (`system`, `user`, `assistant`, `developer`, `tool`);
+- prompts built in variables, heredocs, `sprintf()` and class constants.
+
+A Blade view that the app renders into a prompt is never localized.
+
+When the prompt goes into code that Lyngo cannot read (for example, the app's own wrapper), Lyngo looks at the text. A text that reads as a prompt ("You are a … assistant", "Respond only with JSON") is left as written and named in the report (`ai_prompt`). Text on a page stays copy, also when it starts with "You are": `You are signed in as :name` is copy.
 
 ## Locale conditionals
 

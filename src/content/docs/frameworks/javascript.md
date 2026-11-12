@@ -20,6 +20,7 @@ The rules that keep an app from breaking:
 - Inertia entry files are shared by the server render; the setup registers the plugin through `withApp` or an existing `setup()` and never calls `createApp` or `mount`.
 - Text inside `<code>`, `<kbd>`, `<samp>`, `<var>` and `<pre>` is code. It is never copy.
 - Raw HTML of your own (`{@html}` in Svelte, `v-html` in Vue, `dangerouslySetInnerHTML` in React) stays as written. Lyngo reads no text from it and never writes into it.
+- A prompt sent to an AI model is machine text. It stays as written, with its data. Lyngo knows the openai and Anthropic JS clients, the Vercel AI SDK, LangChain, `@google/genai`, `fetch` and `axios` bodies to an AI endpoint, and role messages (`system`, `user`, `assistant`, `developer`, `tool`). A prompt that goes into code Lyngo cannot read is left as written when it reads as a prompt, and named in the report (`ai_prompt`). Text on a page stays copy. See [AI prompts](/frameworks/laravel/#ai-prompts).
 
 ## Sentences with markup
 
