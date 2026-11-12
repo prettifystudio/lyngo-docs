@@ -34,7 +34,7 @@ The agent, when there is one, sees only the report: ten lines. The files never p
 
 ## What the engine decides
 
-1. **Copy or code.** Every string literal is judged: a label a person reads, or a token the program compares, resolves or sends somewhere. A translated code value breaks an app, so the engine fails closed: it would rather leave a label in English than wrap a token. Text handed to a machine (logs, exceptions, HTTP clients, prompts, commit messages, cache keys) is never copy.
+1. **Copy or code.** Every string literal is judged: a label a person reads, or a token the program compares, resolves or sends somewhere. A translated code value breaks an app, so the engine fails closed: it would rather leave a label in English than wrap a token. Text handed to a machine (logs, exceptions, HTTP clients, prompts, commit messages, cache keys) is never copy. A name that a program reads (a relation, a column, a route name, a session key, an event name) is never copy.
 2. **The key.** The source text is the key. A key that exists is reused; a near duplicate (a different case or trailing punctuation) is pointed to the existing one.
 3. **The call.** The framework's own call, in the right scope: `__()` in Blade and PHP, `t()` from `useTranslation()` in React (`intl.formatMessage()` from `useIntl()` with react-intl), `$t()` in Vue templates, `$_()` in Svelte, `i18next.t()`, `i18n.global.t` or the react-intl `intl` instance at module scope where a hook cannot run.
 4. **The catalogs.** Every language gets the new keys. Values come from translation memory first, then the translator with the project's glossary, then the verifier: placeholders, plural forms per language, script, truncation, register.

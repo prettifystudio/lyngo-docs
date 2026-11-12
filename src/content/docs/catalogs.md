@@ -31,7 +31,7 @@ A loanword or a name that the primary language uses as written stays as written 
 
 ## Form of address
 
-Each project uses one form of address per language: `tu` or `vous` in French, `du` or `Sie` in German, `tú` or `usted` in Spanish. Lyngo takes the form that most values of the existing catalog use. A catalog with no such values gets the form of the first batch that Lyngo translates. Later runs keep that form. The verifier fixes a new value in the other form. A value already in the catalog in the other form is named in the report.
+Each project uses one form of address per language: `tu` or `vous` in French, `du` or `Sie` in German, `tú` or `usted` in Spanish. Lyngo takes the form that most values of the existing catalog use. A catalog with no such values gets the form of the first batch that Lyngo translates. Later runs keep that form. The verifier fixes a new value in the other form. A value already in the catalog in the other form is named in the report. Spanish `su` and `sus` also mean its, his, her and their. When the source means one of these, the verifier does not flag `su` as the formal form. The same applies to Portuguese `seu` and `sua`, and Italian `suo` and `sua`.
 
 ## Keys a language lacks
 

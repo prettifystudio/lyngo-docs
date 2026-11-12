@@ -18,6 +18,7 @@ lyngo: 12 strings localized in 3 files; 9 new keys, 3 reused. (server 468e436)
   fr: 9 translated, 0 from memory
   de: 9 translated, 0 from memory
   ar: 8 translated, 1 from memory; 1 flagged for review: "Reminder message"
+Rebuild your assets to see the changes: npm run build (or npm run dev)
 ```
 
 ## The report, line by line
@@ -36,6 +37,8 @@ lyngo: 12 strings localized in 3 files; 9 new keys, 3 reused. (server 468e436)
 - **encoding**: `converted to UTF-8 (was Windows-1252): <path>` and `left as written, not UTF-8: <path>`. See [Which files](#which-files).
 - **submodules**: `<path> is a submodule: commit it there too`. See [Which files](#which-files).
 - **warnings (N)**: texts left as written, values a database may store, machine text, keys no longer used, [enum labels](/frameworks/enum-labels/) left out. The first 10 are shown, then `… and N more`. [Troubleshooting](/troubleshooting/#warnings-in-the-report) says what to do for each.
+
+- **rebuild**: `Rebuild your assets to see the changes: npm run build (or npm run dev)`, after the summary, since CLI 0.2.16. Shown only when front-end files changed. The command uses the project's package manager, from the lockfile: `pnpm`, `yarn` or `bun`, else `npm`.
 
 When no file changed: `lyngo: nothing changed in the working tree.` When the server sends no patch back: `Nothing to change: every string a person reads already goes through an i18n call.`
 

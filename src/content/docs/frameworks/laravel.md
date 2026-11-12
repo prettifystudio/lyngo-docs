@@ -35,9 +35,13 @@ A text next to a raw `{!! !!}` echo is kept whole, as written, and named in the 
 
 String literals in controllers, requests, notifications, mail and Livewire classes that a person reads: validation messages, flash messages (`->with('success', 'Saved.')`), notification lines, the data of `view('x', [...])` and the messages of `ValidationException::withMessages()`. They become `__('…')`. Validation attribute names and rule strings, array keys, config keys, column names, route names, queue and event names, log messages, exception messages and anything sent to an HTTP client or a model prompt are never touched. See [AI prompts](#ai-prompts).
 
+A name that a program reads is never wrapped, whatever its shape: a relation, a column, a table, a query, a request input, a session key, a route name, a config key, an authorization ability, an Inertia component name. Lyngo decides by the position of the text: the name arguments of query, relation, collection, request, session, `Arr`, `data_get()` and `Gate` methods, the relations in `with()`, the component of `Inertia::render()`. A single lowercase word that goes to a method that shows no text (`->orWhereHas('responsibility', …)`) is a name too. Labels, titles, messages and lines stay copy. A safety net checks the result: when Lyngo would write a translation call in a name position, it puts the original text back, or it leaves the whole file as written.
+
 A literal that a database write stores (`create`, `update`, `insert`, `fill`, `new Model([...])`, an attribute set and then saved) is never copy: a translated value would be stored in the language of the person who triggered the write. When Lyngo cannot prove what the write goes to, it leaves the literal as written and names it in the report (`Left as written, may be stored`).
 
-Count-dependent sentences become one `trans_choice()` key in pipe syntax, with the forms every target language needs (Arabic gets six, Russian three, Japanese one).
+Lyngo follows a value through returns. A method can return an array, and another class can write one key of it to the database or send it in an AI message. Lyngo follows the value by its array key, across classes, to that write or message. The literal stays as written. When the write is only possible, the report names the literal (`may_be_stored`). A literal that goes only to an exception message or a log stays as written too. The same applies to a literal inside a string function: it goes where the result goes.
+
+Count-dependent sentences become one `trans_choice()` key in pipe syntax, with the forms every target language needs (Arabic gets six, Russian three, Japanese one). Any number compared with 1 (`=== 1`, `!== 1`, `> 1`, `< 2`) that picks a singular and a plural noun is a plural too, whatever the name of the number: `$result['events'] === 1 ? 'event' : 'events'`.
 
 A sentence built around `Str::plural()` or `str()->plural()` becomes one key for the whole sentence, in PHP, Blade and mail lines:
 
@@ -45,7 +49,7 @@ A sentence built around `Str::plural()` or `str()->plural()` becomes one key for
 'You have '.$n.' new '.Str::plural('task', $n).'.'
 ```
 
-becomes `trans_choice('You have :count new task.|You have :count new tasks.', $n)`. A sentence with two different counts becomes one `__()` key. Each plural in it is a `trans_choice()` value.
+becomes `trans_choice('You have :count new task.|You have :count new tasks.', $n)`. A sentence with two or more different counts becomes one `__()` key. Each count in it is a `trans_choice()` value.
 
 ## Mail
 
@@ -89,6 +93,8 @@ A prompt sent to an AI model is machine text. Lyngo keeps it as written, with it
 
 A Blade view that the app renders into a prompt is never localized.
 
+Text on the page that the user sends as their own message is copy. An example: the starter questions of an AI chat, which go into a `user` role message. System and developer messages, instructions and prompt templates stay as written.
+
 When the prompt goes into code that Lyngo cannot read (for example, the app's own wrapper), Lyngo looks at the text. A text that reads as a prompt ("You are a … assistant", "Respond only with JSON") is left as written and named in the report (`ai_prompt`). Text on a page stays copy, also when it starts with "You are": `You are signed in as :name` is copy.
 
 ## Locale conditionals
@@ -128,10 +134,10 @@ A backed enum that shows its raw value to people gets a translated `getLabel()`,
 When a project has no i18n yet, `lyngo init` adds the locale wiring. Every piece is a real edit in the patch; nothing happens that you cannot read. When the app has a locale middleware of its own (`app/Http/Middleware/SetLocale.php`, or a middleware named after the locale in `bootstrap/app.php` or `app/Http/Kernel.php`), Lyngo adds none of it.
 
 - **`SetLocale`**, a new middleware in `app/Http/Middleware`. Its `handle()` declares the `Response` return type. Lyngo registers it in the `web` group in `bootstrap/app.php`. For an app that kept `app/Http/Kernel.php`, it goes in the `web` group there, after `StartSession` and before `HandleInertiaRequests`.
-- **Detection sources.** `SetLocale` holds three sources: the user's saved locale, the session, and the browser's `Accept-Language`. They ship commented out on purpose, so that your team picks the sources and their order. Until you enable one, the app renders in `config('app.locale')`. The switcher stores the choice in the session: enable the session source to make the switcher work. `SetLocale` writes the session only when one of its sources found a locale, so it never writes the default locale over a choice that the app stored.
+- **Detection sources.** `SetLocale` reads the session by default. The switcher stores the choice there, so the switcher works at once. When the app has its own switch route, `SetLocale` reads the session key of that route. The other sources stay commented: the user's saved locale (a `users.locale` column), the browser's `Accept-Language`, and the URL. Your team picks the sources and their order. `lyngo init` and the pull request ask you to confirm the detection order. Change it in `app/Http/Middleware/SetLocale.php`. When no source finds a locale, the app renders in `config('app.locale')`. `SetLocale` writes the session only when one of its sources found a locale, so it never writes the default locale over a choice that the app stored.
 - **`available_locales`** in `config/app.php`: the languages the middleware and the route accept.
 - **Inertia shared props**: `locale` and `locales` in `HandleInertiaRequests::share()`, so the page knows the language the server chose.
-- **The switcher** (Inertia): a `LanguageSwitcher` component for your framework. Lyngo puts it in the app's header when it finds a header it can edit safely. Its `aria-label` is translated too.
+- **The switcher**: a `LanguageSwitcher` component for your framework (Inertia), or one link per language (Blade). Lyngo puts it once in the app's real layout, in its header or its nav: the persistent Inertia layout (`AppLayout`, `AuthenticatedLayout` and the like), or the Blade main layout (`layouts/app` or `layouts/navigation`). Lyngo skips a header that shows only on a condition. When Lyngo cannot edit a layout safely, the pull request and the CLI name the file to add the switcher to. Its `aria-label` is translated too.
 - **The route** `GET /locale/{locale}`, named `locale.switch`. It accepts only the languages in `available_locales`, stores the choice in the session, and goes back to the page it came from (or to `/`). It is a closure in `routes/web.php`. When the app has no `routes/web.php` and its routes are controller attributes (spatie/laravel-route-attributes), it is a new `LocaleController` with `#[Get('/locale/{locale}', name: 'locale.switch')]`, in the folder `config/route-attributes.php` registers with the `web` middleware.
 - **Your own switch route.** When the app has a locale switch route (a route with a locale parameter whose action stores the locale), Lyngo adds no second route. The switcher links to your route, and `SetLocale` reads the session key that your route writes.
 - **The route's authentication.** When Lyngo places the switcher, the route takes the authentication of the pages that show it: when every one of those pages is behind `auth` (or `auth:<guard>`), the route gets the same middleware. When one of them is public, the route stays public. When Lyngo cannot find out, the route stays public and `init` prints a note with the reason.
