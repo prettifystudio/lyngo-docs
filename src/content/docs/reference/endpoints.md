@@ -22,12 +22,13 @@ Rate limits answer `429`. A refused token answers `401`. A project the token can
 
 ## Versions
 
-Since CLI 0.2.12, every call carries `User-Agent: lyngo-cli/<version> (node <node version>; <platform>)`. For such a call, the answers of `/cli/*` and `/mcp/admin` carry two headers:
+Since CLI 0.2.12, every call carries `User-Agent: lyngo-cli/<version> (node <node version>; <platform>)`. For such a call, the answers of `/cli/*` and `/mcp/admin` carry these headers:
 
 | header | value |
 |---|---|
 | `X-Lyngo-Cli-Latest` | the newest CLI on npm, for example `0.2.13` |
 | `X-Lyngo-Cli-Minimum` | the oldest CLI Lyngo accepts; not sent when Lyngo accepts every version |
+| `X-Lyngo-Server` | the short commit of the server build that answered, for example `468e436`; not sent when the server does not know its commit. CLI 0.2.15 prints it in `lyngo status` and in the summary line of `lyngo localize` |
 
 A CLI below the minimum gets `426`, on `/cli/*` and on `/mcp/admin` alike, as plain JSON (not a JSON-RPC error, like the `401` and `404` of `/mcp/admin`):
 

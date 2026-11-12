@@ -10,7 +10,7 @@ lyngo localize [--all] [--languages fr,de] [--no-translate] [--dry] [--hook]
 Reads the files you changed, sends them with the catalogs, applies the patch, prints the report. Nothing is committed.
 
 ```text
-lyngo: 12 strings localized in 3 files; 9 new keys, 3 reused.
+lyngo: 12 strings localized in 3 files; 9 new keys, 3 reused. (server 468e436)
   resources/js/pages/settings/Reminders.vue: "Payment reminders", "Days before due date", "Channel", …
   app/Http/Controllers/Settings/ReminderController.php: "Your reminder settings have been saved."
   resources/js/components/ReminderChannel.vue: "Email", "Text message"
@@ -24,6 +24,7 @@ lyngo: 12 strings localized in 3 files; 9 new keys, 3 reused.
 
 - **strings localized**: literals that were wrapped in your framework's call.
 - **new keys**: added to the primary catalog. **reused**: already there; the translation existed too.
+- **server**: the commit of the Lyngo server that answered, since CLI 0.2.15. Include it when you report a problem.
 - **per file**: the strings wrapped there, the first six.
 - **files changed**, **catalogs changed**: every file the patch changed, and the catalog files apart. A file can change without a wrapped string, for example by an [enum label](/frameworks/enum-labels/) edit.
 - **enum labels**: the parts of the enum-label edits, for example `enum labels: 1 enum, 2 resources, 3 frontend reads, 1 type`. Shown only when there are some.

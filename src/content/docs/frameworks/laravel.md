@@ -15,6 +15,12 @@ A sentence with inline tags (`<a>`, `<strong>`, `<em>`, `<code>` and the like) b
 
 The helper `app/Support/Lyngo.php` escapes the whole translation, then puts back only the view's own tags. A translation cannot add markup. `lyngo init` adds the helper; the first view that calls it adds it too when it is missing. The verifier checks the `<elN>` placeholders like the other placeholders.
 
+A sentence stays whole around these parts:
+
+- **An email address or a URL** becomes a placeholder (`:email`, `:url`), not a split point. `Need help? Email us at support@example.com.` becomes `{{ __('Need help? Email us at :email.', ['email' => 'support@example.com']) }}`.
+- **A `__()` call of your own** inside the sentence goes into the one key. `Read the <a href="/docs">documentation</a>, or <a href="/contact">{{ __('Contact us') }}</a>.` becomes one rich key: `Read the <el0>documentation</el0>, or <el1>Contact us</el1>.` A dot key such as `auth.failed` stays as written.
+- **A locale conditional** joins its sentence. See [Locale conditionals](#locale-conditionals).
+
 A text next to a raw `{!! !!}` echo is kept whole, as written, and named in the report: Lyngo never puts a raw echo in a translated sentence. A view whose output a program reads (a script run over SSH or by a process, a file written to disk that no page or mail renders) is never localized or edited.
 
 ## PHP
@@ -33,7 +39,17 @@ A condition on the locale that picks a text becomes one `__()` key:
 app()->getLocale() === 'fr' ? 'Bonjour' : 'Hello'
 ```
 
-becomes `__('Hello')`. The key is the text of the primary language. The other branches are your own translations: `Bonjour` goes to `lang/fr.json` as the value of `Hello`. `App::isLocale('fr')`, chains of conditions and `match (app()->getLocale())` work the same way, in PHP, Livewire classes and Blade echoes. React, Vue and Svelte follow the same rule. A condition that cannot become one key stays as written and is named in the report (`mixed-language source`).
+becomes `__('Hello')`. The key is the text of the primary language. The other branches are your own translations: `Bonjour` goes to `lang/fr.json` as the value of `Hello`. `App::isLocale('fr')`, chains of conditions and `match (app()->getLocale())` work the same way, in PHP, Livewire classes and Blade echoes. React, Vue and Svelte follow the same rule.
+
+In Blade, a locale conditional next to other text or values joins the sentence:
+
+```blade
+<span>{{ app()->getLocale() === 'fr' ? 'Bonjour' : 'Hello' }}, {{ $user->name }}</span>
+```
+
+becomes `{{ __('Hello, :name', ['name' => $user->name]) }}`, and `lang/fr.json` gets `"Hello, :name": "Bonjour, :name"`.
+
+A condition that cannot become one key stays as written and is named in the report (`mixed-language source`).
 
 ## Livewire
 
@@ -52,7 +68,7 @@ A backed enum that shows its raw value to people gets a translated `getLabel()`,
 When a project has no i18n yet, `lyngo init` adds the locale wiring. Every piece is a real edit in the patch; nothing happens that you cannot read. When the app has a locale middleware of its own (`app/Http/Middleware/SetLocale.php`, or a middleware named after the locale in `bootstrap/app.php` or `app/Http/Kernel.php`), Lyngo adds none of it.
 
 - **`SetLocale`**, a new middleware in `app/Http/Middleware`. Its `handle()` declares the `Response` return type. Lyngo registers it in the `web` group in `bootstrap/app.php`. For an app that kept `app/Http/Kernel.php`, it goes in the `web` group there, after `StartSession` and before `HandleInertiaRequests`.
-- **Detection sources.** `SetLocale` holds three sources: the user's saved locale, the session, and the browser's `Accept-Language`. They ship commented out on purpose, so that your team picks the sources and their order. Until you enable one, the app renders in `config('app.locale')`. The switcher stores the choice in the session: enable the session source to make the switcher work.
+- **Detection sources.** `SetLocale` holds three sources: the user's saved locale, the session, and the browser's `Accept-Language`. They ship commented out on purpose, so that your team picks the sources and their order. Until you enable one, the app renders in `config('app.locale')`. The switcher stores the choice in the session: enable the session source to make the switcher work. `SetLocale` writes the session only when one of its sources found a locale, so it never writes the default locale over a choice that the app stored.
 - **`available_locales`** in `config/app.php`: the languages the middleware and the route accept.
 - **Inertia shared props**: `locale` and `locales` in `HandleInertiaRequests::share()`, so the page knows the language the server chose.
 - **The switcher** (Inertia): a `LanguageSwitcher` component for your framework. Lyngo puts it in the app's header when it finds a header it can edit safely. Its `aria-label` is translated too.

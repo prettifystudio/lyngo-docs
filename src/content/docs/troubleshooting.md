@@ -30,7 +30,7 @@ description: "Every message the CLI can print, and what to do."
 | `connection problem (…), trying again in 2 s (1/4).` | Nothing: the CLI tries again after 2, 5 and 10 seconds. |
 | `could not reach https://lyngo.app (…).` | The network failed on every try. Check your connection and run the command again. |
 | `the server did not finish within 65 minutes (job …). Run the command again later.` | The job is still on the server. Run the command again later; `LYNGO_JOB_TIMEOUT` sets a longer wait. |
-| `Lyngo could not finish this job on the server.` | Run the command again. If it fails again, write to us with the job id it prints. |
+| `Lyngo could not finish this job on the server.` | Run the command again. If it fails again, write to us with the job id it prints and the server commit (see [Still stuck](#still-stuck)). |
 | `No such job for this project: it may have expired (jobs are kept for a day).` | Run the command again. |
 | `too many calls. Wait a minute and try again.` | 60 calls a minute per token. |
 | `xx is not one of the project's languages` | `lyngo init --languages …` first. |
@@ -77,3 +77,5 @@ description: "Every message the CLI can print, and what to do."
 ## Still stuck
 
 Write to hello@lyngo.app with the command you ran and its output. The output never contains your token.
+
+Include the server commit, so that we know which Lyngo build answered. Since CLI 0.2.15, `lyngo status` prints it on its last line (`server: 468e436`), and the summary line of `lyngo localize` ends with it (`(server 468e436)`).

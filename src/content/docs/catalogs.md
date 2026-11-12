@@ -24,8 +24,14 @@ Catalogs are written back in their own format: indentation, key order, trailing 
 New values come, in order, from:
 
 1. **Translation memory**: the same source text already translated in this workspace, human values first.
-2. **The translator**, with the project's context (what the app is), the glossary terms present in the batch, the UI element the string sits in (a column header is a noun phrase, a button an imperative), the placeholders' meaning, and the sibling values in other languages when they exist.
-3. **The verifier**, which checks every value: placeholders present and not invented, plural forms for the language, script, truncation, register (one form of address throughout), glossary terms used, and spelling. What it cannot fix it flags.
+2. **The translator**, with the project's context (what the app is), the glossary terms present in the batch, the UI element the string sits in (a column header is a noun phrase, a button an imperative), the placeholders' meaning, the project's [form of address](#form-of-address), and the sibling values in other languages when they exist.
+3. **The verifier**, which checks every value: placeholders present and not invented, plural forms for the language, script, truncation, register (one form of address throughout), glossary terms used, words of the source language left in the value, and spelling. Spanish values get their opening `¡` and `¿`. What it cannot fix it flags.
+
+A loanword or a name that the primary language uses as written stays as written in the primary catalog: `Café` stays `Café` in `en.json`.
+
+## Form of address
+
+Each project uses one form of address per language: `tu` or `vous` in French, `du` or `Sie` in German, `tú` or `usted` in Spanish. Lyngo takes the form that most values of the existing catalog use. A catalog with no such values gets the form of the first batch that Lyngo translates. Later runs keep that form. The verifier fixes a new value in the other form. A value already in the catalog in the other form is named in the report.
 
 ## Keys a language lacks
 
@@ -53,4 +59,4 @@ Every value Lyngo or a translator writes is kept per workspace, with its origin 
 
 ## Flagged for review
 
-A flag means the value was written but the verifier is not sure: read it. Common flags: a placeholder moved to the wrong place, a form of address that differs from the rest of the catalog, a phrase cut at the end.
+A flag means the value was written but the verifier is not sure: read it. Common flags: a placeholder moved to the wrong place, a form of address that differs from the rest of the catalog, a phrase cut at the end, a short label that ends on a dangling word (`Back` as `Retour à`).

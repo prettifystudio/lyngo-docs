@@ -18,13 +18,35 @@ The rules that keep an app from breaking:
 - A string compared, switched on, used as a prop that only takes fixed literals (`side="top"`, `variant`, `type="submit"`), a DOM id, an ARIA target, a selector, a tag name, a path, a CSS class or a key name is a code value and stays.
 - Vue template expressions see only component-scope names and `$t`; the engine never emits `window`, `document` or an import there.
 - Inertia entry files are shared by the server render; the setup registers the plugin through `withApp` or an existing `setup()` and never calls `createApp` or `mount`.
-- Text split by `<br/>` or inline elements becomes one key with element placeholders.
+- Text inside `<code>`, `<kbd>`, `<samp>`, `<var>` and `<pre>` is code. It is never copy.
+- Raw HTML of your own (`{@html}` in Svelte, `v-html` in Vue, `dangerouslySetInnerHTML` in React) stays as written. Lyngo reads no text from it and never writes into it.
+
+## Sentences with markup
+
+One sentence is one key. The elements inside a sentence stay inside its key as numbered chunks: links, `<strong>` and `<em>`, spans, buttons, and components such as a `TextLink`. A link or a button that holds an icon keeps the icon around its words. Text split by `<br/>` is one key too.
+
+```jsx
+<p>If you need more, click <button onClick={regenerate}>Regenerate codes</button> above.</p>
+```
+
+The key is `If you need more, click <el0>Regenerate codes</el0> above.` (react-intl). The button keeps its `onClick`. Each library renders the sentence its own way:
+
+| library | the element in the value | the sentence renders through |
+|---|---|---|
+| react-intl | `<el0>…</el0>` | chunks in `intl.formatMessage()` |
+| react-i18next | `<0>…</0>` | a `Trans` component |
+| vue-i18n | `{el0}` | an `<i18n-t>` component, one slot per element |
+| svelte-i18n | `{el0}` | an `{#each}` loop over the translation, split at its element markers |
+
+In Vue and Svelte, the words inside an element are a key of their own. The translation and the values always render as text. Your elements render as written, where the translation puts them. A translation cannot add markup. Lyngo never writes into `{@html}`, `v-html`, `dangerouslySetInnerHTML` or `innerHTML`.
+
+A limit: in Vue and Svelte, a sentence that starts with a span, followed by a link or a button, stays two keys. vue-i18n and svelte-i18n translate the words of an element apart. React makes it one key.
 
 ## Sentences with a condition
 
-A condition can pick a part of a sentence: ``Showing {from} to {to} {total && ` of ${total}`} results``. One key with the English part inside a value breaks every other language. So Lyngo makes one whole sentence per branch, `Showing {{0}} to {{1}} of {{2}} results` and `Showing {{0}} to {{1}} results` (the placeholders follow your library), and writes the condition around two calls. `cond && <text>` and `cond ? <text> : ''` work this way. A condition between two plain texts (`active ? 'Active' : 'Inactive'`) keeps its own value.
+A condition can pick a part of a sentence: ``Showing {from} to {to} {total && ` of ${total}`} results``. One key with the English part inside a value breaks every other language. So Lyngo makes one whole sentence per branch, `Showing {{0}} to {{1}} of {{2}} results` and `Showing {{0}} to {{1}} results` (the placeholders follow your library), and writes the condition around two calls. `cond && <text>` and `cond ? <text> : ''` work this way. A condition between two plain words in a sentence works this way too: `{open ? 'Hide' : 'View'} recovery codes` becomes `Hide recovery codes` and `View recovery codes`. A condition between two plain texts with no sentence around it (`active ? 'Active' : 'Inactive'`) keeps a key per text.
 
-- The same applies when the sentence is already an i18n call with the condition in its values: the call becomes two calls, one per branch.
+- The same applies when the sentence is already an i18n call with the condition in its values: the call becomes two calls, one per branch. A condition between two plain words keeps its place in the values of such a call.
 - A sentence with two such conditions is left as written and named in the report. Lyngo never makes one sentence per combination. A call it cannot split (a key that is not the text, the part used twice, a plural) is left as written and named too.
 - The keys a rewritten call stops using stay in the catalogs, because another file may still call them. The report names them; delete them when no file calls them.
 
