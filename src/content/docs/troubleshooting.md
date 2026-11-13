@@ -71,7 +71,7 @@ description: "Every message the CLI can print, and what to do."
 
 - **"Detection reads master on GitHub. Push first for an exact result."** Detection reads the branch on GitHub, not your disk. If your local branch is ahead, push, then run `init` again.
 - **A label stayed in English.** The engine fails closed: a word the program also compares or resolves is left alone. `lyngo check <file>` shows what it sees. Wrap it by hand if it is copy; the key and the translations follow at the next `localize`.
-- **"1 flagged for review"** on a language. The value is written; the verifier wants a human eye on it. Read it in the catalog.
+- **"1 flagged for review"** on a language. The value is written; the verifier wants a human eye on it. Read it in the catalog. Since CLI 0.2.18, the lines under it give the file and line, the source text and the reason.
 - **A new language has few keys.** It was added without a catalog. `lyngo translate <code>` fills it.
 - **`files changed` is higher than the files with strings.** An [enum-label](/frameworks/enum-labels/) edit changes files without wrapping a string.
 

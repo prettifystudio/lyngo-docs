@@ -25,13 +25,13 @@ New values come, in order, from:
 
 1. **Translation memory**: the same source text already translated in this workspace, human values first.
 2. **The translator**, with the project's context (what the app is), the glossary terms present in the batch, the UI element the string sits in (a column header is a noun phrase, a button an imperative), the placeholders' meaning, the project's [form of address](#form-of-address), and the sibling values in other languages when they exist.
-3. **The verifier**, which checks every value: placeholders present and not invented, plural forms for the language, script, truncation, register (one form of address throughout), glossary terms used, words of the source language left in the value, and spelling. Spanish values get their opening `¡` and `¿`. What it cannot fix it flags.
+3. **The verifier**, which checks every value: placeholders present and not invented, plural forms for the language, script, truncation, register (one form of address throughout), glossary terms used, words of the source language left in the value, and spelling. Spanish values get their opening `¡` and `¿`. In German, a source word that stays as written after an article gets the capital of a noun: `einen Token`. What it cannot fix it flags.
 
 A loanword or a name that the primary language uses as written stays as written in the primary catalog: `Café` stays `Café` in `en.json`.
 
 ## Form of address
 
-Each project uses one form of address per language: `tu` or `vous` in French, `du` or `Sie` in German, `tú` or `usted` in Spanish. Lyngo takes the form that most values of the existing catalog use. A catalog with no such values gets the form of the first batch that Lyngo translates. Later runs keep that form. The verifier fixes a new value in the other form. A value already in the catalog in the other form is named in the report. Spanish `su` and `sus` also mean its, his, her and their. When the source means one of these, the verifier does not flag `su` as the formal form. The same applies to Portuguese `seu` and `sua`, and Italian `suo` and `sua`.
+Each project uses one form of address per language: `tu` or `vous` in French, `du` or `Sie` in German, `tú` or `usted` in Spanish. Lyngo takes the form that most values of the existing catalog use. A catalog with no such values gets the form of the first batch that Lyngo translates. Later runs keep that form. The verifier fixes a new value in the other form. A value already in the catalog in the other form is named in the report. Spanish `su` and `sus` also mean its, his, her and their. When the source means one of these, the verifier does not flag `su` as the formal form. The same applies to Portuguese `seu` and `sua`, and Italian `suo` and `sua`. Fixed phrases that do not speak to the reader are not the formal form either: Spanish `puede que`, `en su lugar`, `a su vez` and `en su caso`, and the same phrases in Portuguese and Italian.
 
 ## Keys a language lacks
 
@@ -55,8 +55,10 @@ Texts your team took out of localization. Lyngo learns them when a Lyngo pull re
 
 ## Translation memory
 
-Every value Lyngo or a translator writes is kept per workspace, with its origin (machine, verified, human). A project's second language is cheaper than its first, and a sibling project reuses the wording.
+Every value Lyngo or a translator writes is kept per workspace, with its origin (machine, verified, human). A project's second language is cheaper than its first, and a sibling project reuses the wording. Each value keeps the verifier's verdict: correct, or flagged with the reason. A value that comes from memory keeps its flag.
 
 ## Flagged for review
 
 A flag means the value was written but the verifier is not sure: read it. Common flags: a placeholder moved to the wrong place, a form of address that differs from the rest of the catalog, a phrase cut at the end, a short label that ends on a dangling word (`Back` as `Retour à`).
+
+The review can name a word that is correct. When a second translation keeps that word, Lyngo takes it and drops the flag. Since CLI 0.2.18, `lyngo localize` and `lyngo translate` show each flagged value with its reason (see [The report, line by line](/commands/localize/#the-report-line-by-line)).

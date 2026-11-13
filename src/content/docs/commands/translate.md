@@ -13,6 +13,13 @@ For a language you just added, or a catalog that fell behind. It reads the prima
 de: 67 translated, 35 from memory -> lang/de.json
 ```
 
+Since CLI 0.2.18, each value the verifier flagged follows on its own line, with the key and the reason. The first 10 are shown, then `… and N more`:
+
+```text
+de: 66 translated, 35 from memory; 1 flagged for review -> lang/de.json
+    "Export the report": untranslated word "report"
+```
+
 When nothing is missing: `de: complete, 102 keys.`
 
 When the server sends warnings (for example machine text copied unchanged), they follow the result line: `warnings (N):`, the first 10, then `… and N more`. [Troubleshooting](/troubleshooting/#warnings-in-the-report) says what to do for each.

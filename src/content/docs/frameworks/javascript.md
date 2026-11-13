@@ -18,6 +18,7 @@ The rules that keep an app from breaking:
 - A string compared, switched on, used as a prop that only takes fixed literals (`side="top"`, `variant`, `type="submit"`), a DOM id, an ARIA target, a selector, a tag name, a path, a CSS class or a key name is a code value and stays.
 - A name that a program reads is never wrapped: the name in `route()`, a form field name, an event name in `emit()` or `dispatch()`, an Echo channel, a `classList` class, a DOM lookup, a key in `get()` or `has()`. A safety net checks the result: when Lyngo would write a translation call in a name position (`route(t('…'))`, `emit(t('…'))`), it refuses that call and leaves the text as written. A list `key` prop is not a machine use: a text that is also the `key` of a list item stays copy.
 - The values of one property across a list of objects, and the values of one lookup map, are decided together by where they are read. A value that is compared, switched on or used as a lookup key is code for every entry. A value that is rendered is copy for every entry: in `[{ short: 'Mon', name: 'Monday' }]`, `Monday` is copy when the page shows `name`.
+- Lyngo decides a list of strings at module scope, such as `export const starterQuestions = ['What needs my attention right now?', …]`, by where its items are read: in its own file and in the files that import it. When a page shows the items, they are copy. When the code compares them, uses them as lookup keys or puts them in a system prompt, they are code. A list `key` prop and a `user` role message decide nothing. A list that no read decides stays as written. Copy items become lazy getters through the module instance (`i18next.t`, `i18n.global.t`, `i18n.t`), so each item is translated when it is read, not at import.
 - Vue template expressions see only component-scope names and `$t`; the engine never emits `window`, `document` or an import there.
 - Inertia entry files are shared by the server render; the setup registers the plugin through `withApp` or an existing `setup()` and never calls `createApp` or `mount`.
 - Text inside `<code>`, `<kbd>`, `<samp>`, `<var>` and `<pre>` is code. It is never copy.
@@ -57,8 +58,11 @@ aria-label={mood === 'idle' ? t('A fox cub, waiting') : t('A fox cub, writing')}
 
 The two sides of one condition are decided together: in `Start {long ? 'long break' : 'break'}`, both sides are copy, so the keys are `Start long break` and `Start break`. A count before a unit of time is a plural: `${minutes} minute break` becomes one plural key with `count`.
 
+A branch can be a template literal of its own: ``Showing ${count}${total ? ` of ${total}` : ''} tasks`` gives `Showing {{0}} of {{1}} tasks` and `Showing {{0}} tasks`.
+
 - The same applies when the sentence is already an i18n call with the condition in its values: the call becomes two calls, one per branch. A condition between two plain words keeps its place in the values of such a call.
-- A sentence with two such conditions is left as written and named in the report. Lyngo never makes one sentence per combination. A call it cannot split (a key that is not the text, the part used twice, a plural) is left as written and named too.
+- A branch can hold a condition of its own. Lyngo then makes one whole sentence per combination, up to 4 sentences. With more combinations, or with two conditions in one branch, the text stays as written and the report names it (`runs_left_as_written`).
+- A sentence with two conditions side by side is left as written and named in the report. A call it cannot split (a key that is not the text, the part used twice, a plural) is left as written and named too.
 - The keys a rewritten call stops using stay in the catalogs, because another file may still call them. The report names them; delete them when no file calls them.
 
 The same rules apply in React, Vue and Svelte.
@@ -78,7 +82,20 @@ Lyngo supports react-intl in Inertia React apps.
 
 i18next gets `_one` and `_other` keys and the categories each language uses; vue-i18n gets `one | other` pipes; svelte-i18n and react-intl get ICU `{count, plural, …}`. Values are written with every category the target language has.
 
-A sentence with several counts is one key. Each count in it is a plural value with its noun.
+A sentence with several counts is one key, in JSX text and in template literals in scripts: `${tasks} tasks and ${events} events this week`. Each count in it is a plural value with its noun. With react-intl, the sentence is one ICU message, and each count in it is a `plural` part.
+
+## Plain helper files
+
+A plain `.ts` or `.js` file of a Vue or Svelte project (a helper, a store, a formatter) has no component scope. There Lyngo calls the module instance, in the syntax of your library. Template literals with values are localized too:
+
+| library | a sentence with values | a plural |
+|---|---|---|
+| vue-i18n | `i18n.global.t('Moved {0} cards from {1} to {2}', [cards, from, to])` | `i18n.global.t('{0} day overdue \| {0} days overdue', [days], days)` |
+| svelte-i18n | `i18n.t('Moved {0} cards from {1} to {2}', { values: { 0: cards, 1: from, 2: to } })` | `i18n.t('{0, plural, one {# day} other {# days}} overdue', { values: { 0: days } })` |
+
+Sentences with a condition and sentences with several counts use the same syntax. The `t` that `lyngo init` adds for svelte-i18n takes values. An older Lyngo setup has a `t` that takes only a key. When a helper needs values, Lyngo replaces that `t` in the same change.
+
+A template literal at module scope, as a property value, becomes a lazy getter in React, Vue and Svelte. It is translated when it is read, not once at import.
 
 ## Catalogs
 

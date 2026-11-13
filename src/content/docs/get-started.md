@@ -66,7 +66,7 @@ de: 67 translated, 35 from memory -> lang/de.json
 Done. Build as usual; lyngo localize runs when your agent finishes, or run it yourself before committing.
 ```
 
-- **GitHub**: if the Lyngo app cannot read the repository yet, `init` prints the GitHub page where you add it: pick the account, add the repository under Repository access, save. It waits, and continues by itself once you have: up to 10 minutes in a terminal, 9 when an agent or a script runs it. In CI, or with `--no-wait`, it stops there instead, and the next `lyngo init` continues.
+- **GitHub**: if the Lyngo app cannot read the repository yet, `init` prints the GitHub page where you add it: pick the account, add the repository under Repository access, save. It waits, and continues by itself within seconds once you have: up to 10 minutes in a terminal, 9 when an agent or a script runs it. In CI, or with `--no-wait`, it stops there instead, and the next `lyngo init` continues.
 - **Detection** reads the branch on GitHub. Push first for an exact result.
 - **Agent**: when Claude Code is installed, `init` registers the Lyngo MCP server for this repository and adds a hook that runs `lyngo localize` at the end of every task. The hook lives in `.claude/settings.local.json`, which is not committed; the MCP server lives in Claude Code's local scope. If you run `init` from inside a Claude Code session, restart the session if the hook does not run.
 - **Languages**: `--languages` names the target languages. The source stays English unless you pass `--primary`.

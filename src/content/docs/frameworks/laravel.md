@@ -119,7 +119,7 @@ A condition that cannot become one key stays as written and is named in the repo
 
 ## Livewire
 
-Component classes count as PHP; their views as Blade. `wire:confirm` text is wrapped. `lyngo localize --all` takes the component classes too. A `$messages` property becomes a `messages()` method, because a property default cannot call `__()`.
+Component classes count as PHP; their views as Blade. `wire:confirm` text is wrapped. `lyngo localize --all` takes the component classes too. A `$messages` property becomes a `messages()` method, because a property default cannot call `__()`. A component that returns inline Blade from `render()` gets the same rules as a Blade view.
 
 ## Enum values
 

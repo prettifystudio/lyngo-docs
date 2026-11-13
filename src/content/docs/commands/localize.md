@@ -17,7 +17,8 @@ lyngo: 12 strings localized in 3 files; 9 new keys, 3 reused. (server 468e436)
   files changed: 3, catalogs changed: 4
   fr: 9 translated, 0 from memory
   de: 9 translated, 0 from memory
-  ar: 8 translated, 1 from memory; 1 flagged for review: "Reminder message"
+  ar: 8 translated, 1 from memory; 1 flagged for review
+    resources/js/pages/settings/Reminders.vue:18 "Reminder message": untranslated word "Reminder"
 Rebuild your assets to see the changes: npm run build (or npm run dev)
 ```
 
@@ -29,7 +30,7 @@ Rebuild your assets to see the changes: npm run build (or npm run dev)
 - **per file**: the strings wrapped there, the first six.
 - **files changed**, **catalogs changed**: every file the patch changed, and the catalog files apart. A file can change without a wrapped string, for example by an [enum label](/frameworks/enum-labels/) edit.
 - **enum labels**: the parts of the enum-label edits, for example `enum labels: 1 enum, 2 resources, 3 frontend reads, 1 type`. Shown only when there are some.
-- **per language**: `translated` by the translator, `from memory` from the workspace's translation memory, `flagged for review` by the verifier (a placeholder moved, a plural form missing, a register mismatch, a cut phrase). A flagged value is still written; read it before you commit.
+- **per language**: `translated` by the translator, `from memory` from the workspace's translation memory, `flagged for review` by the verifier (a placeholder moved, a plural form missing, a register mismatch, a cut phrase). A flagged value is still written; read it before you commit. Since CLI 0.2.18, one line follows for each flagged value: `path:line "source": reason`, with the file and line where the code shows it. The first 10 are shown, then `… and N more`.
 - **path keys no catalog holds**: path keys such as `auth.failed` that a file calls and no catalog has. Shown only when there are some; add the key or fix the call.
 - **not translated yet**: `de: 40 keys not translated yet ("…", …): run lyngo translate de`. A call translates a limited number of keys per language; the keys over that limit wait for the next run or for `lyngo translate`.
 - **skipped**: `skipped <path>: <reason>`, a path the server refused.
@@ -78,9 +79,9 @@ Run `lyngo localize` again to send the failed files again, or apply their blocks
 
 ## Reading the repository
 
-A file you did not send is read from GitHub, from the project's branch: a component's definition, an enum, a model. Lyngo reads it and never edits it.
+A decision can need a file you did not send in this job: a component's definition, an enum, a model, a file that imports a list of strings, the caller of a method. Lyngo reads it from an earlier job of the same run, from your working tree through `needs`, or from GitHub, from the project's branch. Lyngo reads it and never edits it. So how `--all` splits the files into jobs does not change a decision.
 
-Your working tree can be ahead of GitHub. When a decision needs your copy of such a file (today: [enum labels](/frameworks/enum-labels/)), the answer lists those paths in `needs` and the CLI does not apply it. It sends the batch once more with your copies as read-only context, and applies the second answer. It sends only source files inside the repository (the extensions and folders above), at most 50, of 512 KB each at most.
+Your working tree can be ahead of GitHub. When a decision reads a file from GitHub, the answer lists its path in `needs`, with the blob that the server read in `needs_sha`. The CLI does not apply that answer. It sends the job once more with your copies as read-only context, and applies the second answer. Since CLI 0.2.18, it sends a file only when your copy differs from that blob. When no copy differs, it applies the first answer. It sends only source files inside the repository (the extensions and folders above), at most 50, of 512 KB each at most.
 
 ## Flags
 
@@ -111,4 +112,4 @@ Commit after `lyngo localize --all`. The plain `lyngo localize` sends every unco
 
 ## The whole repository
 
-`lyngo localize --all` takes every source file a scan would read, not only the changed ones: the project's frameworks, without vendor, build output, tests and configuration. The server picks the paths with the scan's own rules. The CLI sends them in jobs of up to 100 files, applies each patch before the next job, and prints a line per batch. The keys, the translation memory and the glossary keep the batches consistent. At the end the result sits in your working tree: review it with `git diff` and commit. No pull request. Run it once on a repository that was never localized; afterwards the hook and the plain `lyngo localize` cover what changes.
+`lyngo localize --all` takes every source file a scan would read, not only the changed ones: the project's frameworks, without vendor, build output, tests and configuration. The server picks the paths with the scan's own rules. The CLI sends them in jobs of up to 100 files, applies each patch before the next job, and prints a line per batch. The keys, the translation memory and the glossary keep the batches consistent. A decision that needs a file of another batch reads it too (see [Reading the repository](#reading-the-repository)). At the end the result sits in your working tree: review it with `git diff` and commit. No pull request. Run it once on a repository that was never localized; afterwards the hook and the plain `lyngo localize` cover what changes.

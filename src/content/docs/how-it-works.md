@@ -18,9 +18,9 @@ Both run the same engine with the same memory: keys, glossary, refused strings, 
 - the source files changed in the working tree (`git status`), limited to views, components and PHP, and never `vendor`, `node_modules`, tests, config, storage or public folders;
 - the catalog files of the project's languages, as they are on disk: the JSON catalogs and Laravel's `lang/<code>/*.php`;
 - the git remote, so the server knows which project you mean;
-- when an answer asks for them in `needs`, the source files a decision reads, as read-only context: at most 50, of 512 KB each at most.
+- when an answer asks for them in `needs`, the source files a decision reads, as read-only context: at most 50, of 512 KB each at most. Since CLI 0.2.18, only the files whose copy differs from the one the server read.
 
-The engine reads the other files it needs (a component's definition, an enum, a model) from the project's branch on GitHub, through the App. It never edits them. `lyngo localize --all` also sends the list of tracked paths, so the server can pick the files a scan would read.
+The engine reads the other files it needs (a component's definition, an enum, a model, the files that import a list of strings) from the earlier jobs of the run, or from the project's branch on GitHub, through the App. It never edits them. `lyngo localize --all` also sends the list of tracked paths, so the server can pick the files a scan would read.
 
 `lyngo init` sends `package.json`, `composer.json`, the list of the repository's file paths, and the files the server names when it builds the setup patch. Detection itself reads the branch on GitHub through the App.
 

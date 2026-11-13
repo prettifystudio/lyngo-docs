@@ -12,7 +12,7 @@ Base: `https://lyngo.app`. JSON in and out. Authenticated calls carry `Authoriza
 | `GET /cli/me` | token | the account, the token prefix, the workspaces |
 | `DELETE /cli/token` | token | revoke this token |
 | `POST /cli/projects` | token | `{remote, branch, workspace?}` → the project, or `{needs_github_app, connect_url}` |
-| `GET /cli/projects/status?remote=` | token | whether GitHub covers the repository, and the project when it exists |
+| `GET /cli/projects/status?remote=` | token | whether GitHub covers the repository, and the project when it exists; while the App has no access, the server asks GitHub directly |
 | `POST /cli/projects/{id}/detect` | token | the i18n setup, read from the branch on GitHub |
 | `PATCH /cli/projects/{id}` | token | `{languages, primary_language}` |
 | `POST /cli/projects/{id}/scaffold` | token | `{tree, files}` → `{patch, install_command, notes}`; `409 {needs: [paths]}` asks for more files |

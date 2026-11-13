@@ -31,7 +31,7 @@ Every tool acts as the person behind the token, with the same permissions and pl
 
 The job's result holds `files` and `catalogs` (or `patch`), the `report`, `deferred` (the files left for the next call) and `next`. A job takes 100 files. The files of one enum go in the same call when they fit.
 
-**`needs`.** Lyngo reads the files you did not send from the project's branch on GitHub. When a decision needs your working tree's copy of such a file (today: [enum labels](/frameworks/enum-labels/)), the answer lists those paths in `needs`. Do not write that answer. Call again with the same arguments plus those files in `context`, and write the second answer.
+**`needs`.** Lyngo reads the files you did not send from the project's branch on GitHub. When a decision reads such a file, the answer lists its path in `needs` and its blob SHA in `needs_sha`. Your working tree can hold a newer copy. Do not write that answer. Call again with the same arguments plus those files in `context`, and write the second answer. A file whose blob (`git hash-object`) equals its `needs_sha` can stay out. When every file stays out, write the first answer.
 
 ## Jobs: async and job_status
 
