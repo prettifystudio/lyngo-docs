@@ -24,8 +24,8 @@ Catalogs are written back in their own format: indentation, key order, trailing 
 New values come, in order, from:
 
 1. **Translation memory**: the same source text already translated in this workspace, human values first.
-2. **The translator**, with the project's context (what the app is), the glossary terms present in the batch, the UI element the string sits in (a column header is a noun phrase, a button an imperative), the placeholders' meaning, the project's [form of address](#form-of-address), and the sibling values in other languages when they exist.
-3. **The verifier**, which checks every value: placeholders present and not invented, plural forms for the language, script, truncation, register (one form of address throughout), glossary terms used, words of the source language left in the value, and spelling. Spanish values get their opening `¡` and `¿`. In German, a source word that stays as written after an article gets the capital of a noun: `einen Token`. What it cannot fix it flags.
+2. **The translator**, with the project's context (what the app is), the [project brief](#project-brief), the glossary terms present in the batch, the UI element the string sits in (a column header is a noun phrase, a button an imperative, a label shown while an action runs an action in progress: German `Wird synchronisiert`), the placeholders' meaning (a plural count is a number, so it comes before its noun: `3 sessions de travail`), the project's [form of address](#form-of-address), and the sibling values in other languages when they exist.
+3. **The verifier**, which checks every value: placeholders present and not invented, plural forms for the language, script, truncation, register (one form of address throughout), glossary terms used, words of the source language left in the value, spelling, code words kept as written (`access_denied`), parts of the source kept (a parenthetical, a quoted part), a plural count before its noun, a running label kept in progress, and two terms of the source that became one word. Strings from the same file go to the translator together, so sibling labels share one form. The AI review reads every value. Spanish values get their opening `¡` and `¿`. In German, a source word that stays as written after an article gets the capital of a noun: `einen Token`. What it cannot fix it flags.
 
 A loanword or a name that the primary language uses as written stays as written in the primary catalog: `Café` stays `Café` in `en.json`.
 
@@ -44,6 +44,10 @@ A catalog value that a program reads (a shell command, a path or a URL alone, a 
 ## Plural forms
 
 Every language gets the categories it uses: French and Portuguese `one` and `other`; Russian, Polish and Czech `one`, `few`, `many`, `other`; Arabic six; Japanese, Chinese and Turkish one. In Arabic the dual never carries the digit as well.
+
+## Project brief
+
+A few sentences about the app: what it is, who uses it, and its terms that many languages would translate with one word (for example `assignment: coursework imported from Canvas, not a task`). Lyngo builds it once, with one AI call, from the README, `composer.json` and `package.json`, the routes, the model names and a sample of the primary catalog. It never reads `.env` or key files. The translator and the AI review read it with every request. `lyngo init` prints its first sentence. Edit it in the project settings, under Translation & AI. Lyngo never overwrites a brief that a person saved; "Rebuild" fills the field again for you to review.
 
 ## Glossary
 
