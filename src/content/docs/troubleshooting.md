@@ -61,11 +61,13 @@ description: "Every message the CLI can print, and what to do."
 | `Some folders are git submodules, so they were not localized` (scan of a push) | A submodule's files live in another repository, so the GitHub App cannot change them. Run `lyngo localize --all` in your working tree, then commit the change in the submodule's repository too. |
 | `Judged by its content only (the repository could not be read in full): <view>` | Lyngo could not read the code that renders the view. Run the command again. |
 
-`lyngo init` can print one more note, after the setup patch:
+`lyngo init` can print these notes, after the setup patch:
 
 | note | what to do |
 |---|---|
 | `The language switch route /locale/{locale} is public. Lyngo could not find the authentication of the pages that show the switcher: <reason>. If only signed-in users see the switcher, add your authentication middleware to this route.` | If only signed-in users see the switcher, add your `auth` middleware to the route. Otherwise keep it public. |
+| `The login and register pages have no language switcher: <test> checks that your routes require sign-in, so the language switch route keeps auth …` | Your test forbids a public route. To let visitors change the language before they sign in, list the route as public in that test, remove `auth` from it, and add the switcher to the guest layout. |
+| `Add the switcher to <layout> too: it is the layout of the pages for visitors who are not signed in (login, register), and Lyngo could not edit it safely.` | Import the switcher in that layout and put it above the page content, or link the language switch route from it (Blade). |
 
 ## Things that look wrong but are not
 
