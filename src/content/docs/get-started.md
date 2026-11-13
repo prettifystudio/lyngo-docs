@@ -58,6 +58,7 @@ GitHub is connected.
 Created shop in workspace Acme.
 Detected: vue, vue-i18n, catalogs in lang
 Claude Code: the lyngo MCP server is registered for this repository, and the Stop hook is in .claude/settings.local.json.
+Restart Claude Code in this repository so that it loads the Stop hook and the MCP server: exit, then run claude --continue to keep the conversation.
 Languages: en -> fr, de
 Scaffolding: nothing to add.
 No catalog yet for de: lang/de.json is missing, and en.json holds 102 keys that need translating.
@@ -68,7 +69,7 @@ Done. Build as usual; lyngo localize runs when your agent finishes, or run it yo
 
 - **GitHub**: if the Lyngo app cannot read the repository yet, `init` prints the GitHub page where you add it: pick the account, add the repository under Repository access, save. It waits, and continues by itself within seconds once you have: up to 10 minutes in a terminal, 9 when an agent or a script runs it. In CI, or with `--no-wait`, it stops there instead, and the next `lyngo init` continues.
 - **Detection** reads the branch on GitHub. Push first for an exact result.
-- **Agent**: when Claude Code is installed, `init` registers the Lyngo MCP server for this repository and adds a hook that runs `lyngo localize` at the end of every task. The hook lives in `.claude/settings.local.json`, which is not committed; the MCP server lives in Claude Code's local scope. If you run `init` from inside a Claude Code session, restart the session if the hook does not run.
+- **Agent**: when Claude Code is installed, `init` registers the Lyngo MCP server for this repository and adds a hook that runs `lyngo localize` at the end of every task. The hook lives in `.claude/settings.local.json`, which is not committed; the MCP server lives in Claude Code's local scope. An open Claude Code session does not load a new hook or MCP server. When `init` adds them, it tells you to restart: exit, then run `claude --continue` in the repository to keep the conversation (since CLI 0.2.19).
 - **Languages**: `--languages` names the target languages. The source stays English unless you pass `--primary`.
 - **Scaffolding**: when the project has no i18n setup, `init` adds it to your working tree as a patch: the library in `package.json`, the entry point wiring, the catalog folder, the Laravel locale wiring. When the patch edits `package.json`, `init` runs the install (`npm install`, `pnpm install`, `yarn install` or `bun install`, from your lockfile); restart your dev server after it. `--no-install` prints the command instead.
 
