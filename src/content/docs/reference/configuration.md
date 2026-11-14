@@ -9,7 +9,8 @@ description: "Environment variables and files the CLI uses."
 |---|---|
 | `~/.config/lyngo/token` | the personal token from `lyngo login`, mode 600 |
 | `~/.config/lyngo/update-notice.json` | the last [update line](/get-started/#updates) the CLI printed and when, so it prints it at most once a day |
-| `.claude/settings.local.json` | the Stop hook, written by `lyngo init`; git ignores it |
+| `.claude/settings.local.json` | the Stop hook, written by `lyngo init` when the Claude Code plugin is not installed; git ignores it. Since CLI 0.2.22 the plugin carries the hook |
+| `.git/config` | `lyngo.project = true`: the repository is a Lyngo project, and the plugin's Stop hook acts in it (since CLI 0.2.22) |
 | `.git/lyngo-hook.json` | the files the Stop hook sent, by content, so it sends only what changed since its last run |
 | `~/.claude.json` | the `lyngo` MCP server in local scope for this repository |
 
@@ -23,6 +24,8 @@ description: "Environment variables and files the CLI uses."
 | `LYNGO_NO_BROWSER` | `1`: print addresses, never open them | |
 | `LYNGO_JOB_TIMEOUT` | seconds to wait for one `localize` or `translate` job | `3900` (65 minutes) |
 | `CI` | set (any value but `false`): `lyngo init` stops at the GitHub step with exit code 3 instead of waiting | |
+| `LYNGO_PLUGIN_HOOK` | `1`, set by the Claude Code plugin for the commands of a session: the plugin's Stop hook runs in this session, so `lyngo init` asks for no restart (since CLI 0.2.22) | |
+| `CLAUDECODE` | `1`, set by Claude Code for its commands: `lyngo init` prints the restart line only there, never in a terminal | |
 
 ## Limits
 

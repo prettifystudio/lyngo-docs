@@ -31,7 +31,7 @@ export default defineConfig({
 						{ label: 'lyngo init', slug: 'commands/init' },
 						{ label: 'lyngo localize', slug: 'commands/localize' },
 						{ label: 'lyngo translate', slug: 'commands/translate' },
-						{ label: 'lyngo check and status', slug: 'commands/check-status' },
+						{ label: 'lyngo check, lookup and status', slug: 'commands/check-status' },
 					],
 				},
 				{

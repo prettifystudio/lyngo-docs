@@ -14,9 +14,11 @@ description: "The plugin: a hook that localizes at the end of a task, and three 
   - `check`: one file's user-facing strings.
 - **A skill** that tells the agent when to use each, and what is never copy: logs, exceptions, HTTP clients, prompts, commit messages, cache keys.
 
-The hook is in `.claude/settings.local.json`, local to this repository and not committed. The MCP server is added in Claude Code's local scope; `claude mcp list` shows it as `lyngo`.
+Since CLI 0.2.22, the hook comes with the [plugin](#the-plugin). Claude Code loads plugin hooks when a session starts, so a session that has the plugin runs the hook from the first stop after `lyngo init`. You do not restart. The hook runs at every stop in every repository, and acts only in a repository that `lyngo init` connected (`lyngo.project = true` in the repository's git config). In other repositories it runs one git command and prints nothing. On Windows, Claude Code runs it in Git Bash, which comes with Git for Windows.
 
-A hook that `lyngo init` adds while a Claude Code session runs may not run in that session. If it does not run when a task ends, restart the session.
+Without the plugin, `lyngo init` puts the hook in `.claude/settings.local.json`, local to this repository and not committed. When you run `init` from an open Claude Code session, it then tells you to restart: exit, then run `claude --continue` in the repository to keep the conversation. A repository that already has this hook keeps it, and the plugin's hook leaves the stop to it: the hook runs once per stop.
+
+The MCP server is added in Claude Code's local scope; `claude mcp list` shows it as `lyngo`. Claude Code loads it when the next session starts. Until then, the agent gets the same answers from `lyngo status`, `lyngo lookup` and `lyngo check`. The MCP server is no reason to restart.
 
 After `lyngo localize --all`, commit before the next task: the hook sends every file it has not seen yet, the `--all` result too.
 
@@ -29,7 +31,7 @@ claude plugin marketplace add prettifystudio/lyngo-claude-plugin
 claude plugin install lyngo@lyngo
 ```
 
-It carries the skill `lyngo-i18n` and the commands `/lyngo:init`, `/lyngo:localize`, `/lyngo:status` and `/lyngo:login`. `/lyngo:init` tells the agent to ask you about the locale detection order before it edits `app/Http/Middleware/SetLocale.php`. The CLI itself comes from npm; `lyngo init` prints these two lines when Claude Code has no lyngo plugin yet.
+It carries the Stop hook, the skill `lyngo-i18n` and the commands `/lyngo:init`, `/lyngo:localize`, `/lyngo:status` and `/lyngo:login`. `/lyngo:init` tells the agent to ask you about the locale detection order before it edits `app/Http/Middleware/SetLocale.php`. The CLI itself comes from npm; `lyngo init` prints these two lines when Claude Code has no lyngo plugin yet.
 
 Without the plugin, say it in words: "run lyngo init", "run lyngo localize". The agent runs the command and shows its output.
 
