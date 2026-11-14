@@ -31,7 +31,7 @@ claude plugin marketplace add prettifystudio/lyngo-claude-plugin
 claude plugin install lyngo@lyngo
 ```
 
-It carries the Stop hook, the skill `lyngo-i18n` and the commands `/lyngo:init`, `/lyngo:localize`, `/lyngo:status` and `/lyngo:login`. `/lyngo:init` tells the agent to ask you about the locale detection order before it edits `app/Http/Middleware/SetLocale.php`. The CLI itself comes from npm; `lyngo init` prints these two lines when Claude Code has no lyngo plugin yet.
+It carries the Stop hook, the skill `lyngo-i18n` and the commands `/lyngo:init`, `/lyngo:localize`, `/lyngo:status` and `/lyngo:login`. Claude Code does not update this marketplace by itself, so since CLI 0.2.22 `lyngo init`, and once a day every other `lyngo` command (never the Stop hook), updates the plugin when it is older than the CLI. The new plugin loads when Claude Code starts next. `/lyngo:init` tells the agent to ask you about the locale detection order before it edits `app/Http/Middleware/SetLocale.php`. The CLI itself comes from npm; `lyngo init` prints these two lines when Claude Code has no lyngo plugin yet.
 
 Without the plugin, say it in words: "run lyngo init", "run lyngo localize". The agent runs the command and shows its output.
 
