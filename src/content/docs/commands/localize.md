@@ -74,6 +74,7 @@ lyngo: 1 file not changed, the patch did not apply: app/Http/Controllers/HomeCon
 - A file that failed keeps its content. Its blocks stay in the file that the last line names.
 - The command ends with exit code 1. The hook mode always ends with exit code 0.
 - With `--all`, the first line names the batch (`batch 2: the patch did not apply as a whole; …`), and the next batch goes on.
+- Since CLI 0.2.21, the count and the list name every file that did not change. Before, a server patch that failed as a whole was counted as 1 file and none of its files applied.
 
 Run `lyngo localize` again to send the failed files again, or apply their blocks by hand.
 
@@ -105,11 +106,12 @@ Some teams wrap with Lyngo and translate with people. `--no-translate` does that
 `lyngo localize --hook` is the command the Stop hook runs. It prints one JSON object for Claude Code: a line for you, and the full report for the agent, which tells you what changed. A failure (not logged in, no project, a network error) comes back as a line with the fix instead of a hook error.
 
 - **Where.** It runs in the project where the Claude Code session started (`$CLAUDE_PROJECT_DIR`), when that folder is in a git work tree. Otherwise it runs in the current folder.
-- **What it sends.** Only the files whose content changed since its last run. It keeps their state in `.git/lyngo-hook.json`. With nothing new to send it prints nothing.
+- **What it sends.** Only the files whose content changed since the last Lyngo run, the hook's or yours. Since CLI 0.2.21, a plain `lyngo localize` and `lyngo localize --all` record their files too, so the next stop sends only the files edited after them. The state is in `.git/lyngo-hook.json`. A file whose patch did not apply is not recorded, so the next stop sends it again. With nothing new to send it prints nothing.
+- **One run at a time.** Since CLI 0.2.21, each `localize`, `translate` and `init` run holds a lock in the git folder (`.git/lyngo.lock`). When another run holds it, the hook does not wait: it prints `Lyngo: another Lyngo run is in progress in this repository; the changes go in the next stop`. A manual run waits up to 2 minutes for it, and stops at once when the other run is `localize --all`. A lock of a run that is gone is taken over.
 - **What you see.** For example `Lyngo: 8 strings localized in 3 files, 7 new keys; fr: 7 translated`. When the patch changed files without a wrapped string, it counts them: `Lyngo: 3 files changed (enum labels)`. When nothing needed a change: `Lyngo: checked 2 files, nothing to localize`.
 
-Commit after `lyngo localize --all`. The plain `lyngo localize` sends every uncommitted source file, and the hook sends every file it has not seen yet, so an uncommitted `--all` result goes to the server again.
+Commit after `lyngo localize --all`. The plain `lyngo localize` sends every uncommitted source file, so an uncommitted `--all` result goes to the server again. The hook does not send it again (since CLI 0.2.21).
 
 ## The whole repository
 
-`lyngo localize --all` takes every source file a scan would read, not only the changed ones: the project's frameworks, without vendor, build output, tests and configuration. The server picks the paths with the scan's own rules. The CLI sends them in jobs of up to 100 files, applies each patch before the next job, and prints a line per batch. The keys, the translation memory and the glossary keep the batches consistent. A decision that needs a file of another batch reads it too (see [Reading the repository](#reading-the-repository)). At the end the result sits in your working tree: review it with `git diff` and commit. No pull request. Run it once on a repository that was never localized; afterwards the hook and the plain `lyngo localize` cover what changes.
+`lyngo localize --all` takes every source file a scan would read, not only the changed ones, and since CLI 0.2.21 also the new files that git does not track yet and does not ignore (such as the `LanguageSwitcher` that `init` adds): the project's frameworks, without vendor, build output, tests and configuration. The server picks the paths with the scan's own rules. The CLI sends them in jobs of up to 100 files, applies each patch before the next job, and prints a line per batch. The keys, the translation memory and the glossary keep the batches consistent. A decision that needs a file of another batch reads it too (see [Reading the repository](#reading-the-repository)). At the end the result sits in your working tree: review it with `git diff` and commit. No pull request. Run it once on a repository that was never localized; afterwards the hook and the plain `lyngo localize` cover what changes.
