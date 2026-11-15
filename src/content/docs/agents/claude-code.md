@@ -37,4 +37,4 @@ Without the plugin, say it in words: "run lyngo init", "run lyngo localize". The
 
 ## What it costs
 
-The same feature built twice by Claude Code on fresh clones of the same repository: alone, the agent localized by hand for $1.79 and 14,441 output tokens; with the CLI at the end, $1.44 and 8,967 output tokens, with the same checks passed. Measured on 2026-10-10 on a settings page with five languages. The gap grows with the number of strings and languages.
+One feature with 99 user-facing strings in 12 files (a Laravel app with Inertia React, French), built once by Claude Code and then localized two ways. By hand, the agent spent $1.64, 44,068 output tokens and 6 min 12 s on the localization step. With the Stop hook, the agent spent nothing on that step and Lyngo took 47 s. Both had 0 missed strings and 0 code values wrapped by mistake. Measured on 2026-10-25 and 2026-10-26. The gap grows with the number of strings and languages.
