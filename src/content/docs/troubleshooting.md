@@ -60,6 +60,7 @@ description: "Every message the CLI can print, and what to do."
 | `Left as written: react-intl text no hook can format with the catalogs, …` | The text is outside a component in an app without the shared `intl` instance (an app with its own root provider), or under a file's own `IntlProvider` that reads its locale or formats in its own way. Move it into a component under the app's provider, then run `lyngo localize` again. |
 | `Some folders are git submodules, so they were not localized` (scan of a push) | A submodule's files live in another repository, so the GitHub App cannot change them. Run `lyngo localize --all` in your working tree, then commit the change in the submodule's repository too. |
 | `Judged by its content only (the repository could not be read in full): <view>` | Lyngo could not read the code that renders the view. Run the command again. |
+| `Keeps the language it was built in (a component builds it once): <line>: <text> (<reason>)` | A component computes this text one time, when it starts, and Lyngo could not make it follow the language safely: the code reads it once, types it as a string, or assigns it again. After a language switch it shows the old language until the page loads again. Build the text where the template reads it, or make it a computed value. |
 
 `lyngo init` can print these notes, after the setup patch:
 
@@ -68,6 +69,7 @@ description: "Every message the CLI can print, and what to do."
 | `The language switch route /locale/{locale} is public. Lyngo could not find the authentication of the pages that show the switcher: <reason>. If only signed-in users see the switcher, add your authentication middleware to this route.` | If only signed-in users see the switcher, add your `auth` middleware to the route. Otherwise keep it public. |
 | `The login and register pages have no language switcher: <test> checks that your routes require sign-in, so the language switch route keeps auth …` | Your test forbids a public route. To let visitors change the language before they sign in, list the route as public in that test, remove `auth` from it, and add the switcher to the guest layout. |
 | `Add the switcher to <layout> too: it is the layout of the pages for visitors who are not signed in (login, register), and Lyngo could not edit it safely.` | Import the switcher in that layout and put it above the page content, or link the language switch route from it (Blade). |
+| `Your Inertia entry follows the locale with a listener of its own, and Lyngo left it as written. …` | Your entry sets the language after the next page mounts, so text a page builds one time keeps the old language after a switch. On Inertia 3, listen to `beforeUpdate`, not `success`. On Inertia 1 or 2, also set the language when the page object changes: a `usePage()` watcher with `flush: 'sync'` in Vue, the page store in Svelte. Lyngo rewrites only the listener it wrote itself. |
 
 ## Things that look wrong but are not
 
