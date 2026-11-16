@@ -31,6 +31,7 @@ Rebuild your assets to see the changes: npm run build (or npm run dev)
 - **files changed**, **catalogs changed**: every file the patch changed, and the catalog files apart. A file can change without a wrapped string, for example by an [enum label](/frameworks/enum-labels/) edit.
 - **enum labels**: the parts of the enum-label edits, for example `enum labels: 1 enum, 2 resources, 3 frontend reads, 1 type`. Shown only when there are some.
 - **per language**: `translated` by the translator, `from memory` from the workspace's translation memory, `flagged for review` by the verifier (a placeholder moved, a plural form missing, a register mismatch, a cut phrase). A flagged value is still written; read it before you commit. One exception: a value that changes a code word or leaves out a part of the source gets a repair, then a fresh translation. If both fail, the catalog gets the source text with the flag, never the broken value. Since CLI 0.2.18, one line follows for each flagged value: `path:line "source": reason`, with the file and line where the code shows it. The first 10 are shown, then `… and N more`.
+- **validation field names**: `Validation field names: 29 added in fr, de, es; 9 in en.`, since CLI 0.2.23: the field names Lyngo added to `lang/<code>/validation.php`, counted per language. With several jobs, one line gives the sum for each language. Shown only when Lyngo added some. See [Validation field names](/frameworks/laravel/#validation-field-names).
 - **path keys no catalog holds**: path keys such as `auth.failed` that a file calls and no catalog has. Shown only when there are some; add the key or fix the call.
 - **not translated yet**: `de: 40 keys not translated yet ("…", …): run lyngo translate de`. A call translates a limited number of keys per language; the keys over that limit wait for the next run or for `lyngo translate`.
 - **skipped**: `skipped <path>: <reason>`, a path the server refused.
@@ -59,6 +60,8 @@ Since CLI 0.2.7, each call is a job on the server. The CLI sends the call, gets 
 
 A job takes up to 100 files. With more, the server names the rest, and the CLI sends them in the next job with the catalogs as they are on disk then. The files of one enum (the enum, its models, resources, types and the components that read it) go in the same job. You see one report.
 
+Since CLI 0.2.23, a request holds at most 20 MB of files and catalogs. The Lyngo server refuses a request over 35 MB. While all the files left to send fit in 20 MB with the catalogs, each request holds all of them, whole, as before: the server localizes up to 100 and reads the others as context. Above 20 MB, the CLI sends only the files of the next job: up to 100, and never more than 20 MB with the catalogs. The server reads the other files from GitHub, and asks for your copies when your working tree can be ahead (see [Reading the repository](#reading-the-repository)). When the server still refuses a request as too large, the CLI stops with one line: `the request is too large for the Lyngo server (HTTP 413, 36.2 MB)`. See [Troubleshooting](/troubleshooting/).
+
 ## A patch that does not apply
 
 Your working tree can change between the read and the write. Since CLI 0.2.13, when the patch does not apply as a whole, the CLI applies it file by file and names each file:
@@ -82,7 +85,7 @@ Run `lyngo localize` again to send the failed files again, or apply their blocks
 
 A decision can need a file you did not send in this job: a component's definition, an enum, a model, a file that imports a list of strings, the caller of a method. Lyngo reads it from an earlier job of the same run, from your working tree through `needs`, or from GitHub, from the project's branch. Lyngo reads it and never edits it. So how `--all` splits the files into jobs does not change a decision.
 
-Your working tree can be ahead of GitHub. When a decision reads a file from GitHub, the answer lists its path in `needs`, with the blob that the server read in `needs_sha`. The CLI does not apply that answer. It sends the job once more with your copies as read-only context, and applies the second answer. Since CLI 0.2.18, it sends a file only when your copy differs from that blob. When no copy differs, it applies the first answer. It sends only source files inside the repository (the extensions and folders above), at most 50, of 512 KB each at most.
+Your working tree can be ahead of GitHub. When a decision reads a file from GitHub, the answer lists its path in `needs`, with the blob that the server read in `needs_sha`. The CLI does not apply that answer. It sends the job once more with your copies as read-only context, and applies the second answer. Since CLI 0.2.18, it sends a file only when your copy differs from that blob. When no copy differs, it applies the first answer. It sends only source files inside the repository (the extensions and folders above), at most 50, of 512 KB each at most. Since CLI 0.2.23, the context fits in the 20 MB of the request too: a file that does not fit is left out, and the server reads its copy from GitHub.
 
 ## Flags
 
