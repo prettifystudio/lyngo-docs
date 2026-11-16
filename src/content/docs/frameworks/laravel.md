@@ -129,6 +129,16 @@ A backed enum that shows its raw value to people gets a translated `getLabel()`,
 
 `lang/en.json` and `lang/<code>.json`, key = source text. When a language is added, the framework's own files come with it: `auth`, `validation`, `passwords`, `pagination`, from Laravel-Lang. `lyngo localize` adds them too: `lang/<code>/auth.php`, `pagination.php`, `passwords.php` and `validation.php`, where they are missing. The report names them.
 
+### Validation field names
+
+Laravel puts a field's name into its messages: "The :attribute field is required." Without a name for the field, the message shows the key in words, in English: "Le champ first name est obligatoire." Lyngo fills `'attributes'` in `lang/<code>/validation.php` for every field the app validates, so the message reads "Le champ prénom est obligatoire."
+
+- **The fields.** Lyngo reads the rules of FormRequests, of `validate()`, `validateWithBag()` and `Validator::make()` calls, of Livewire components and form objects (`rules()`, `$rules`, `#[Validate]`) and of Volt components. A rule that names another field (`required_if:type,company`, `same:email`) covers that field too. A field you name yourself where you validate it (`attributes()`, `as:`, `validationAttributes()`, the attributes argument) keeps your name there. Filament fields are left alone: Filament uses each field's label.
+- **The name.** Lyngo takes the label your form shows for the field (`<label for="first_name">`, a label before its input, a `label` prop) and its translation from your catalog, so the form and the error say the same word. A field with no label gets its key in words, translated. Each name is written as it reads inside a sentence: "prénom" in French, "Vorname" in German.
+- **One name per field.** The list serves every form. When two forms label one field differently ("Team name" and "Name"), the field gets its generic name, and the report names both forms.
+- **What stays.** An entry already in the file stays as it is. So does the entry of a field your code no longer validates. A file that is not one plain array is left as written, and the report says so. English gets an entry only where your label differs from Laravel's own words for the key.
+- **When.** `lyngo localize` (and `--all`), the scan pull request, translation pull requests and a language you add. The pull request says how many names it added in each language.
+
 ## The setup patch
 
 When a project has no i18n yet, `lyngo init` adds the locale wiring. Every piece is a real edit in the patch; nothing happens that you cannot read. When the app has a locale middleware of its own (`app/Http/Middleware/SetLocale.php`, or a middleware named after the locale in `bootstrap/app.php` or `app/Http/Kernel.php`), Lyngo adds none of it.
