@@ -12,6 +12,11 @@ export default defineConfig({
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/prettifystudio' }],
 			customCss: ['./src/styles/custom.css'],
 			logo: { src: './src/assets/logo.svg', alt: 'Lyngo' },
+			// Starlight sets the large Twitter card but no image: every shared link showed an empty card.
+			head: [
+				{ tag: 'meta', attrs: { property: 'og:image', content: 'https://docs.lyngo.app/og-image.png' } },
+				{ tag: 'meta', attrs: { name: 'twitter:image', content: 'https://docs.lyngo.app/og-image.png' } },
+			],
 			components: { PageTitle: './src/components/PageTitle.astro' },
 			plugins: [
 				starlightLlmsTxt({
